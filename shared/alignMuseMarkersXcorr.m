@@ -12,13 +12,13 @@ function [MuseStruct] = alignMuseMarkersXcorr(cfg, MuseStruct, force)
 %
 % Necessary fields (as defined in _setparams function):
 %
-% cfg.align.name                = e.g.: {'Hspike','SpikeDetect'};                               % Name of markers/patterns to align
-% cfg.align.channel             = e.g.: {'_HaT2_1','_HaT2_2','_HaT2_3','_HaT2_4','_HaT2_5'};    % Channels to use for alignment
-% cfg.align.demean              = e.g.: 'yes';
-% cfg.align.baselinewindow      = e.g.: [-0.2 -0.1];
-% cfg.align.reref               = e.g.: 'yes';
-% cfg.align.refmethod           = e.g.: 'bipolar';
-% cfg.align.latency             = e.g.: [-0.1, 0.2];                                            % timeperiod to use for crosscorrelation
+% cfg.align.name                = e.g.: {'Hspike','SpikeDetect'} % Name of markers/patterns to align
+% cfg.align.channel             = e.g.: {'_HaT2_1','_HaT2_2','_HaT2_3','_HaT2_4','_HaT2_5'} % Channels to use for alignment
+% cfg.align.demean              = e.g.: 'yes'
+% cfg.align.baselinewindow      = e.g.: [-0.2 -0.1]
+% cfg.align.reref               = e.g.: 'yes'
+% cfg.align.refmethod           = e.g.: 'bipolar'
+% cfg.align.latency             = e.g.: [-0.1, 0.2] % timeperiod to use for crosscorrelation
 %
 % Stephen Whitmarsh (stephen.whitmarsh@gmail.com)
 %
@@ -47,7 +47,8 @@ else
     cfgtemp                 = rmfield(cfg,'LFP');
     cfgtemp.LFP.name        = cfg.align.name;
     cfgtemp.LFP.channel     = cfg.align.channel;
-    [LFP]                   = readLFP(cfgtemp, MuseStruct, true, false);
+    cfgtemp.LFP.write       = false;
+    [LFP]                   = readLFP(cfgtemp, MuseStruct, true);
     
     for ipart = 1:size(cfg.directorylist,2)
         
@@ -86,7 +87,7 @@ else
             shifted_clean_z(isnan(shifted_clean_z)) = 0;
             
             % draw figure
-            fig = figure(1);
+            fig = figure('visible','off');
             fig.Renderer = 'Painters';
             
             subplot(2,5,1);
@@ -160,7 +161,7 @@ else
                 for ievent = 1 : size(MuseStruct{ipart}{idir}.markers.(cfg.muse.startend{imarker,1}).synctime,2)
                     if any(dat.trialinfo(:,1) == ievent & dat.trialinfo(:,3) == idir)
                         timeshift = nshift(i) * 1/dat.fsample;
-                        fprintf('Timeshifting event %d in part %d by %d samples (%0.3f seconds) \n',ievent,ipart,nshift(i),timeshift);
+                        fprintf('Timeshifting event %d in dir %d, part %d, by %d samples (%0.3f seconds) \n',ievent,idir,ipart,nshift(i),timeshift);
                         MuseStruct{ipart}{idir}.markers.(cfg.muse.startend{imarker,1}).timeshift(ievent)      = timeshift;
                         MuseStruct{ipart}{idir}.markers.(cfg.muse.startend{imarker,1}).synctime(ievent)       = MuseStruct{ipart}{idir}.markers.(cfg.muse.startend{imarker,1}).synctime(ievent) + timeshift;
                         MuseStruct{ipart}{idir}.markers.(cfg.muse.startend{imarker,1}).clock(ievent)          = MuseStruct{ipart}{idir}.markers.(cfg.muse.startend{imarker,1}).clock(ievent) + seconds(timeshift);
