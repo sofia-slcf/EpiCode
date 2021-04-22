@@ -64,6 +64,9 @@ for ipart = 1:size(MuseStruct,2)
         
         %remove forbidden characters
         for ievent = 1:size(events,1)
+			if isempty(events(ievent).EventString)
+				events(ievent).EventString = 'unknown';
+			end
             events(ievent).EventString = strrep(events(ievent).EventString, ' ', '_');
             events(ievent).EventString = strrep(events(ievent).EventString, '-', '_');
             events(ievent).EventString = strrep(events(ievent).EventString, '(', '_');
