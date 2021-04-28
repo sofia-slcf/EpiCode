@@ -72,6 +72,7 @@ for ipart = 1:size(MuseStruct,2)
             events(ievent).EventString = strrep(events(ievent).EventString, '(', '_');
             events(ievent).EventString = strrep(events(ievent).EventString, ')', '_');
             events(ievent).EventString = strrep(events(ievent).EventString, '.', '_');
+            events(ievent).EventString = strrep(events(ievent).EventString, '>', '_');
         end
       
         %add events to MuseStruct
@@ -85,6 +86,10 @@ for ipart = 1:size(MuseStruct,2)
                    
                    MuseStruct{ipart}{idir}.markers.(markername).synctime = ft_getopt(MuseStruct{ipart}{idir}.markers.(markername),'synctime', []);
                    MuseStruct{ipart}{idir}.markers.(markername).clock    = ft_getopt(MuseStruct{ipart}{idir}.markers.(markername),'clock', datetime.empty);
+                   
+                   if events(ievent).TimeStamp < hdr.FirstTimeStamp
+                       error('it cannot have events before start of trials')
+                   end
                    
                    marker_time = (events(ievent).TimeStamp - hdr.FirstTimeStamp) / hdr.TimeStampPerSample / hdr.Fs;
                    MuseStruct{ipart}{idir}.markers.(markername).synctime(end+1) = marker_time;
