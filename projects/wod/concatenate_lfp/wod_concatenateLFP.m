@@ -127,7 +127,7 @@ for irat = rat_list
             
             add_nev = false;
             if overwriteMuseMarkerFile || ~exist(fullfile(output_datapath,'Events.mrk'), 'file')
-%                 copyfile(config{irat}.muse.templatemarker, fullfile(output_datapath,'Events.mrk'));
+                copyfile(config{irat}.muse.templatemarker, fullfile(output_datapath,'Events.mrk'));
                 add_nev = true;
             end
             

@@ -35,7 +35,7 @@ configcommon.LFP.name              = configcommon.name;
 configcommon.muse.backupdir            = fullfile(datasavedir,'Backup_MuseMarker');
 configcommon.muse.startmarker.WoD      = 'Vent_Off';   % start and end Muse marker. For defining trials
 configcommon.muse.endmarker.WoD        = 'Vent_On';   % start and end Muse marker. For defining trials
-configcommon.epoch.toi.WoD             = [-600, 3000];%modif
+configcommon.epoch.toi.WoD             = [-600, 3500];%modif
 configcommon.epoch.pad.WoD             = 5;
 configcommon.LFP.resamplefs            = 320;%Hz, si possible un diviseur entier de la Fs (sampling frequency) d'origine
 configcommon.LFP.write                 = true; %save computed data to disk
@@ -54,7 +54,7 @@ configcommon.timefreq.timestep.short     = 1;% in second, time between 2 sliding
 configcommon.timefreq.movmeanwin   = [1,1,1,100,100,100];%in sample points, one value per analysis_name
 configcommon.timefreq.tapsmofrq.long    = 2; %2
 configcommon.timefreq.tapsmofrq.short    = 2; %2
-configcommon.timefreq.toi.long           =  {[-600 3000], [-600 3000]}; % time window suroundging time of interst per trial 
+configcommon.timefreq.toi.long           =  {[-600 3500], [-600 3500]}; % time window suroundging time of interst per trial 
 configcommon.timefreq.toi.short           = {[-600 600], [-600 600]};  % time window suroundging time of interst per trial 
 
 
@@ -260,6 +260,10 @@ config{10}.LFP.rename          = {'E31','E30', 'E29', 'E28','E27', 'E26', 'E25',
 config{10}.LFP.chan_depth      = {200, 300, 400, 500, 600, 700, 800, 900, 1000 , 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200};
 config{10}.LFP.origin_WoD          = {'E14', 'E14'};
 config{10}.LFP.origin_WoR          = {'E11', 'E11'};
+
+config{10}.epoch.toi.WoD           =  [-600 400]; % time window suroundging time of interst trial 2 smaller than configcommon
+config{10}.timefreq.toi.long           =  {[-600 3000], [-600 400]}; % time window suroundging time of interst trial 2 smaller than configcommon
+config{10}.timefreq.toi.short           = {[-600 600], [-600 400]};
 
 config{10}.circus.channel      = {'E03' ,'E04', 'E06', 'E09', 'E13' ,'E16', 'E18', 'E19', 'E20', 'E21' ,'E22', 'E23'};       %name of the first electrode
 config{10}.circus.rename       = {};
