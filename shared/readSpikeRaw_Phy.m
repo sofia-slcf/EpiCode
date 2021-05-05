@@ -50,7 +50,6 @@ function [SpikeRaw] = readSpikeRaw_Phy(cfg, force)
 %   You should have received a copy of the GNU General Public License
 %   along with EpiCode. If not, see <http://www.gnu.org/licenses/>.
 
-
 % get the default cfg options
 cfg.circus.postfix       = ft_getopt(cfg.circus, 'postfix', []);
 cfg.circus.part_list     = ft_getopt(cfg.circus, 'part_list', 'all');
