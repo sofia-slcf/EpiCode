@@ -84,7 +84,8 @@ configcommon.circus.postfix      = []; % after using circus-gui-matlab's SAVE nu
 % config{1}.LFP.chan_depth      = {3138,	3038,	2938,	2838,	2738,	2638,	2538,	2438,	2338,	2238,	2138,	2038,	1938,	1838,	1738,	1638,	1538,	1438,	1338,	1238,	1138,	1038,	938,	838,	738,	638,	538,	438,	338,	238,	138};
 % config{1}.LFP.origin_WoD          = {'E14', 'E14'};
 % config{1}.LFP.origin_WoR          = {'E11', 'E11'};
-% 
+% config{1}.LFP.recov               = {1,1};
+
 % config{1}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
 % config{1}.circus.rename       = {'E2', 'E4', 'E11'};       %name of the first electrode
 
@@ -104,6 +105,8 @@ config{2}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', '
 config{2}.LFP.chan_depth      = {2897.2,	2797.2,	2697.2,	2597.2,	2497.2,	2397.2,	2297.2,	2197.2,	2097.2,	1997.2,	1897.2,	1797.2,	1697.2,	1597.2,	1497.2,	1397.2,	1297.2,	1197.2,	1097.2,	997.2,	897.2,	797.2,	697.2,	597.2,	497.2,	397.2,	297.2,	197.2,	97.1999999999998};
 config{2}.LFP.origin_WoD          = {'E14', 'E14'};
 config{2}.LFP.origin_WoR          = {'E11', 'E11'};
+config{2}.LFP.recov               = {1,1};
+
 
 config{2}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
 config{2}.circus.rename       = {'E2', 'E4', 'E11'};       %name of the first electrode
@@ -125,6 +128,7 @@ config{3}.LFP.rename          = {'E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 
 config{3}.LFP.chan_depth      = {3215,	3115,	3015,	2915,	2815,	2715,	2615,	2515,	2415,	2315,	2215,	2115,	2015,	1915,	1815,	1715,	1615,	1515,	1415,	1315,	1215,	1115,	1015,	915,	815,	715,	615,	515,	415,	315,	215};
 config{3}.LFP.origin_WoD          = {'E14', 'E14'};
 config{3}.LFP.origin_WoR          = {'E11', 'E11'};
+config{3}.LFP.recov               = {1,1};
 
 config{3}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
 config{3}.circus.rename       = {'E2', 'E4', 'E11'};
@@ -144,6 +148,7 @@ config{4}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', '
 config{4}.LFP.chan_depth      = {3103,	3003,	2903,	2803,	2703,	2603,	2503,	2403,	2303,	2203,	2103,	2003,	1903,	1803,	1703,	1603,	1503,	1403,	1303,	1203,	1103,	1003,	903,	803,	703,	603,	503,	403,	303,	203,	103};
 config{4}.LFP.origin_WoD          = {'E14', 'E14'};
 config{4}.LFP.origin_WoR          = {'E11', 'E11'};
+config{4}.LFP.recov               = {0,0};
 
 config{4}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
 config{4}.circus.rename       = {'E2', 'E4', 'E11'};
@@ -167,6 +172,10 @@ config{5}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', '
 config{5}.LFP.chan_depth      = {3119.3,	3019.3,	2919.3,	2819.3,	2719.3,	2619.3,	2519.3,	2419.3,	2319.3,	2219.3,	2119.3,	2019.3,	1919.3,	1819.3,	1719.3,	1619.3,	1519.3,	1419.3,	1319.3,	1219.3,	1119.3,	1019.3,	919.3,	819.3,	719.3,	619.3,	519.3,	419.3,	319.3,	219.3,	119.3,};
 config{5}.LFP.origin_WoD          = {'E14', 'E14'};
 config{5}.LFP.origin_WoR          = {'E11', 'E11'};
+config{5}.LFP.recov               = {1,0};
+
+
+
 config{5}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
 config{5}.circus.rename       = {'E2', 'E4', 'E11'};
 
@@ -187,6 +196,8 @@ config{6}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', '
 config{6}.LFP.chan_depth      = {3247.7,	3147.7,	3047.7,	2947.7,	2847.7,	2747.7,	2647.7,	2547.7,	2447.7,	2347.7,	2247.7,	2147.7,	2047.7,	1947.7,	1847.7,	1747.7,	1647.7,	1547.7,	1447.7,	1347.7,	1247.7,	1147.7,	1047.7,	947.7,	847.7,	747.7,	647.7,	547.7,	447.7,	347.7,	247.7,	147.7};
 config{6}.LFP.origin_WoD          = {'E14', 'E14'};
 config{6}.LFP.origin_WoR          = {'E11', 'E11'};
+config{6}.LFP.recov               = {1,1};
+
 
 config{6}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
 config{6}.circus.rename       = {'E2', 'E4', 'E11'};
@@ -206,7 +217,8 @@ config{6}.circus.rename       = {'E2', 'E4', 'E11'};
 % config{7}.LFP.chan_depth      = {201, 301, 401, 501, 601, 701, 801, 901, 1001, 1101, 1201, 1301, 1401, 1501, 1601, 1701, 1801, 1901, 2001, 2101, 2201, 2301, 2401, 2501, 2601, 2701, 2801, 2901, 3001, 3101, 3201};
 % config{7}.LFP.origin_WoD          = {'E14', 'E14'};
 % config{7}.LFP.origin_WoR          = {'E11', 'E11'};
-% 
+% config{7}.LFP.recov               = {1,1};
+
 % config{7}.circus.channel      = { 'E5', 'E6' ,'E10','E12', 'E17', 'E18', 'E19' ,'E20' ,'E22' ,'E24' ,'E28'};       %name of the first electrode
 % config{7}.circus.rename       = {};
 
@@ -224,9 +236,10 @@ config{6}.circus.rename       = {'E2', 'E4', 'E11'};
 % config{8}.LFP.chan_depth      = {279, 379, 479, 579, 679, 779, 879, 979, 1079, 1179, 1279, 1379, 1479, 1579, 1679, 1779, 1879, 1979, 2079, 2179, 2279, 2379, 2479, 2579, 2679, 2779, 2879, 2979, 3079, 3179};
 % config{8}.LFP.origin_WoD          = {'E14', 'E14'};
 % config{8}.LFP.origin_WoR          = {'E11', 'E11'};
+% config{8}.LFP.recov               = {1,0};
 
-config{8}.circus.channel      = {'E11', 'E13', 'E20' ,'E21' ,'E22' ,'E23', 'E28', 'E30'};       %name of the first electrode
-config{8}.circus.rename       = {};
+% config{8}.circus.channel      = {'E11', 'E13', 'E20' ,'E21' ,'E22' ,'E23', 'E28', 'E30'};       %name of the first electrode
+% config{8}.circus.rename       = {};
 
 %% rat 9
 config{9}                       = configcommon;
@@ -242,6 +255,8 @@ config{9}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', '
 config{9}.LFP.chan_depth      = {135, 235, 335, 435, 535, 635, 735, 835 ,935 , 1035, 1135, 1235 , 1335, 1435, 1535, 1635, 1735, 1835, 1935, 2035, 2135};
 config{9}.LFP.origin_WoD          = {'E14', 'E14'};
 config{9}.LFP.origin_WoR          = {'E11', 'E11'};
+config{9}.LFP.recov               = {1,1};
+
 
 config{9}.circus.channel      = {'E01', 'E02', 'E03','E04', 'E05', 'E06'};       %name of the first electrode
 config{9}.circus.rename       = {};
@@ -260,10 +275,9 @@ config{10}.LFP.rename          = {'E31','E30', 'E29', 'E28','E27', 'E26', 'E25',
 config{10}.LFP.chan_depth      = {200, 300, 400, 500, 600, 700, 800, 900, 1000 , 1100, 1200, 1300, 1400, 1500, 1600, 1700, 1800, 1900, 2000, 2100, 2200, 2300, 2400, 2500, 2600, 2700, 2800, 2900, 3000, 3100, 3200};
 config{10}.LFP.origin_WoD          = {'E14', 'E14'};
 config{10}.LFP.origin_WoR          = {'E11', 'E11'};
-
+config{10}.LFP.recov               = {1,0};
 config{10}.epoch.toi.WoD           =  [-600 400]; % time window suroundging time of interst trial 2 smaller than configcommon
-config{10}.timefreq.toi.long           =  {[-600 3000], [-600 400]}; % time window suroundging time of interst trial 2 smaller than configcommon
-config{10}.timefreq.toi.short           = {[-600 600], [-600 400]};
+
 
 config{10}.circus.channel      = {'E03' ,'E04', 'E06', 'E09', 'E13' ,'E16', 'E18', 'E19', 'E20', 'E21' ,'E22', 'E23'};       %name of the first electrode
 config{10}.circus.rename       = {};
