@@ -39,7 +39,7 @@ ft_defaults
 
 config = eval(configscript);
 
-for irat = rat_list
+for irat =  rat_list
     
     % loop through different parts
     for ipart = 1 : size(config{irat}.directorylist,2)
@@ -125,9 +125,9 @@ for irat = rat_list
             
             %create Muse Marker File
             
-            add_nev = false;
+            add_nev = true; %REMOVE TRUE => FALSE
             if overwriteMuseMarkerFile || ~exist(fullfile(output_datapath,'Events.mrk'), 'file')
-%                 copyfile(config{irat}.muse.templatemarker, fullfile(output_datapath,'Events.mrk'));
+                copyfile(config{irat}.muse.templatemarker, fullfile(output_datapath,'Events.mrk')); %écrase markers préexistants
                 add_nev = true;
             end
             
@@ -145,10 +145,22 @@ for irat = rat_list
                 continue
             end
             
-            fname                                = fullfile(config{irat}.rawdir,config{irat}.directorylist{ipart}{idir},temp.name);
+            fname = fullfile(config{irat}.rawdir,config{irat}.directorylist{ipart}{idir},temp.name);
+            temp        = dir(fullfile(config{irat}.rawdir,config{irat}.directorylist{ipart}{idir},['*',config{irat}.LFP.channel{ichan},'.ncs']));
+            hdrdir{idir}  = ft_read_header(fullfile(config{irat}.rawdir,config{irat}.directorylist{ipart}{idir}, temp.name));
+            
             nev_data{idir} = read_neuralynx_nev(fname,'eventformat','neuralynx_nev');
+            
             for ievent = 1:size(nev_data{idir}, 1)
-                nev_data{idir}(ievent).idir = idir;
+                nev_data{idir}(ievent, 1).idir = idir;
+                
+                %correct event times in case there is missing data between 2
+                %concatenated files
+                if idir > 1
+                    timesampdiff(idir) = hdrdir{idir}.FirstTimeStamp - (hdrdir{idir-1}.FirstTimeStamp + hdrdir{idir-1}.nSamples * hdrdir{idir-1}.TimeStampPerSample);
+                    nev_data{idir}(ievent).TimeStamp = nev_data{idir}(ievent).TimeStamp - timesampdiff(idir);
+                end
+                
             end
             
         end
@@ -163,7 +175,7 @@ for irat = rat_list
             for ievent = 1:size(nev_data{idir},1)
                 idx = size(nev_all{1},1) + 1;
                 for ifield = string(fieldnames(nev_data{idir})')
-                    nev_all{1}(idx).(ifield) = nev_data{idir}(ievent).(ifield);
+                    nev_all{1}(idx, 1).(ifield) = nev_data{idir}(ievent).(ifield);
                 end
             end
         end

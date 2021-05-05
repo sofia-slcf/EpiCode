@@ -74,7 +74,11 @@ for ipart = 1:size(MuseStruct,2)
             events(ievent).EventString = strrep(events(ievent).EventString, '.', '_');
             events(ievent).EventString = strrep(events(ievent).EventString, '>', '_');
         end
-      
+        
+%         cfgtemp                      = [];
+%         cfgtemp.editmarkerfile.toremove = unique({events.EventString});
+%         MuseStruct                   = editMuseMarkers(cfgtemp, MuseStruct);
+        
         %add events to MuseStruct
         cfgtemp                      = [];
         cfgtemp.editmarkerfile.toadd = unique({events.EventString});
@@ -88,7 +92,8 @@ for ipart = 1:size(MuseStruct,2)
                    MuseStruct{ipart}{idir}.markers.(markername).clock    = ft_getopt(MuseStruct{ipart}{idir}.markers.(markername),'clock', datetime.empty);
                    
                    if events(ievent).TimeStamp < hdr.FirstTimeStamp
-                       error('it cannot have events before start of trials')
+                       warning('event before start of file : markername = %s, ievent = %d', markername, ievent);
+%                        error('it cannot have events before start of trials')
                    end
                    
                    marker_time = (events(ievent).TimeStamp - hdr.FirstTimeStamp) / hdr.TimeStampPerSample / hdr.Fs;
