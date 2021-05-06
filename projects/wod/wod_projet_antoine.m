@@ -97,7 +97,7 @@ stats_all=wod_wavedetection([config16, config32],true);
 
 %extract origin depth, timing, propagation speed. make stats between
 %protocols and between waves.
-calculated_data= wod_propag_analysis([config16 config32],true);
+%calculated_data= wod_propag_analysis([config16 config32],true);
 
 
 
@@ -108,7 +108,7 @@ calculated_data= wod_propag_analysis([config16 config32],true);
 %wod_tfr_grandaverage(config);
 
 %gather 16 and 32 chans
-%stats_concat = wod_fusion_data(stats_all,force);
+ordered_data = wod_fusion_data(stats_all,[config16 config32],true);
 
 end %rat_list
 end %wod_project

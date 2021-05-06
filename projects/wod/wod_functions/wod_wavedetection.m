@@ -1,4 +1,4 @@
-function stats = wod_wavedetection(cfg, force)
+function stats_all = wod_wavedetection(cfg, force)
 
 fname_out = fullfile(cfg{4}.datasavedir,'Detection', sprintf('wod_wavedetection_allrat.mat'));
 if exist(fname_out, 'file') && force == false
@@ -77,9 +77,9 @@ for irat= 1:size(cfg,2)
             
             %% WOD and WOR peak detection
             
-            %WOD detection
-            %select lfp channel (in
-            %case channel numbers were schuffled by fieldtrip)
+%             WOD detection
+%             select lfp channel (in
+%             case channel numbers were schuffled by fieldtrip)
             chan_idx    = strcmp(LFP_lpfilt.label, ichan_name);
             
             wod_marker = MuseStruct{1}{1}.markers.WOD.synctime(itrial);
@@ -106,11 +106,11 @@ for irat= 1:size(cfg,2)
             clear t t_1 t_2 t_sel
             
             
-            %store rat name
+%             store rat name
             stats_all{irat}.rat_name= string(cfg{irat}.prefix);
-            %store peak timings per channel in structure
+%             store peak timings per channel in structure
             stats_all{irat}.WoD.peak_time(ichan,itrial)= t_peak_wod;
-            %express wor data compared to Vent_On
+%             express wor data compared to Vent_On
             
             
             t_VentOn= MuseStruct{1}{1}.markers.Vent_On.synctime(itrial)-starttrial(itrial) +offsettrial(itrial);
@@ -124,7 +124,7 @@ for irat= 1:size(cfg,2)
             
             
             
-            %plot detection for visual control
+%             plot detection for visual control
             fig_wodpeak= figure;
             plot(LFP_lpfilt.time{itrial},LFP_lpfilt.trial{itrial}(ichan,:));
             hold on
@@ -136,7 +136,7 @@ for irat= 1:size(cfg,2)
             hold on
             scatter(t_peak_wor,v_peak_wor,'x');
             xlim([t_peak_wor-10 t_peak_wor+10]);
-%             
+            
             detectsavedir=fullfile(cfg{irat}.imagesavedir,'detection');
             detectpeak_wod=fullfile(detectsavedir,'WoD','peak',sprintf('%s',cfg{irat}.prefix));
             detectpeak_wor=fullfile(detectsavedir,'WoR','peak',sprintf('%s',cfg{irat}.prefix));
@@ -160,27 +160,27 @@ for irat= 1:size(cfg,2)
             dtx_savefigure(fig_worpeak,fname_worpeak,'png','pdf','close');
             
             clear fname_wodpeak fname_worpeak detectpeak_wod detectpeak_wor
-            %% Determine minimum and maximum slopes and extract timings and values
+            % Determine minimum and maximum slopes and extract timings and values
             
-            %WOD window selection
+%             WOD window selection
             t1= t_peak_wod-30;
             t2= t_peak_wod+30;
             t_sel= [t1 t2];
             
-            %cut data to keep only WOD
+%             cut data to keep only WOD
             cfgtemp=[];
             cfgtemp.latency= t_sel;
             WOD_cut= ft_selectdata(cfgtemp,LFP_lpfilt);
             clear t1 t2 t_sel
             
-            %Transform into slope
+%             Transform into slope
             WOD_cut_slope=WOD_cut;
             WOD_cut_slope.trial{itrial}= ft_preproc_derivative(WOD_cut.trial{itrial});
-            %smooth slope
-            WOD_cut_slope.trial{itrial}= movmean(WOD_cut_slope.trial{itrial},100,2);
+%             smooth slope
+%             WOD_cut_slope.trial{itrial}= movmean(WOD_cut_slope.trial{itrial},100,2);
             
-            %Search for peaks in slope data
-            %Determine time window to search
+%             Search for peaks in slope data
+%             Determine time window to search
             t = WOD_cut.time{itrial};
             t_1 = t > (t_peak_wod - 10);
             t_2 = t < (t_peak_wod + 10);
@@ -189,30 +189,30 @@ for irat= 1:size(cfg,2)
             [v_peak_wodslope, t_peak_wodslope] = findpeaks(-WOD_cut_slope.trial{itrial}(chan_idx,t_sel),t(t_sel),'NPeaks',1,'SortStr','descend','WidthReference','Halfheight');
             clear t t_1 t_2 t_sel
             
-            %save values
+%             save values
             
             stats_all{irat}.WoD.min_slope_time(ichan,itrial)=  t_peak_wodslope;
             stats_all{irat}.WoD.min_slope_value(ichan,itrial)=   -v_peak_wodslope;
            
-            %WOR threshold
+%             WOR threshold
             t1= t_peak_wor-30;
             t2= t_peak_wor+30;
             t_sel= [t1 t2];
             
-            %cut data to keep only WOR
+%             cut data to keep only WOR
             cfgtemp=[];
             cfgtemp.latency= t_sel;
             WOR_cut= ft_selectdata(cfgtemp,LFP_lpfilt);
             clear t1 t2 t_sel
             
-            %Transform into slope
+%             Transform into slope
             WOR_cut_slope=WOR_cut;
             WOR_cut_slope.trial{itrial}= ft_preproc_derivative(WOR_cut.trial{itrial});
-            %smooth slope
-            WOR_cut_slope.trial{itrial}= movmean(WOR_cut_slope.trial{itrial},1000,2);
+%             smooth slope
+%             WOR_cut_slope.trial{itrial}= movmean(WOR_cut_slope.trial{itrial},1000,2);
             
-            %Search for peaks in slope data
-            %Determine time window to search
+%             Search for peaks in slope data
+%             Determine time window to search
             t = WOR_cut.time{itrial};
             t_1 = t > (t_peak_wor - 3);
             t_2 = t < (t_peak_wor + 3);
@@ -221,8 +221,8 @@ for irat= 1:size(cfg,2)
             [v_peak_worslope, t_peak_worslope] = findpeaks(WOR_cut_slope.trial{itrial}(chan_idx,:),t,'NPeaks',1,'SortStr','descend','WidthReference','Halfheight');
             clear t t_1 t_2 t_sel
             
-            %save values
-            %express timings of WoR according to Vent On
+%             save values
+%             express timings of WoR according to Vent On
             t_VentOn= MuseStruct{1}{1}.markers.Vent_On.synctime(itrial)-starttrial(itrial) +offsettrial(itrial);
            
             real_timeslope_wor= t_peak_worslope - t_VentOn;
@@ -241,7 +241,7 @@ for irat= 1:size(cfg,2)
                 stats_all{irat}.WoR.min_slope_time(ichan,itrial)=nan;
                 stats_all{irat}.WoR.min_slope_value(ichan,itrial)= nan;
             end
-            %plot for visual control
+%             plot for visual control
             
             fig_wodslope=figure;
             plot(WOD_cut_slope.time{itrial},WOD_cut_slope.trial{itrial}(ichan,:));
@@ -278,25 +278,25 @@ for irat= 1:size(cfg,2)
             
             clear fname_wodslope fname_worslope detectslope_wod detectslope_wor
             
-            %% Determine threshold and crossing points
+            % Determine threshold and crossing points
             
-            %calculate threshold 20% of max slope
+%             calculate threshold 20% of max slope
             wod_thr= -0.2*v_peak_wodslope;
             wor_thr= 0.2*v_peak_worslope;
             
-            %Determine crossing point
-            %define time window
+%             Determine crossing point
+%             define time window
             t = WOD_cut.time{itrial};
             t_1 = t > (t_peak_wodslope - 5);
             t_2 = t < (t_peak_wodslope + 5);
             t_sel = t_1 & t_2;
             
-            %Create curve and horizontal line
+%             Create curve and horizontal line
             x1 = WOD_cut_slope.time{itrial}(1,t_sel);
             y1 = WOD_cut_slope.trial{itrial}(ichan,t_sel);
             x2 = x1;
             y2 = ones(size(y1)) * wod_thr;
-            %Find values of intersection of 2 curves
+%             Find values of intersection of 2 curves
             [x_wodintersect, y_wodintersect] = intersections(x1, y1, x2, y2);
             
             time_start_wod= x_wodintersect(1);
@@ -309,19 +309,19 @@ for irat= 1:size(cfg,2)
             t_2 = t < (t_peak_worslope + 10);
             t_sel = t_1 & t_2;
             
-            %Create curve and horizontal line
+%             Create curve and horizontal line
             x1 = WOR_cut_slope.time{itrial}(1,t_sel);
             y1 = WOR_cut_slope.trial{itrial}(ichan,t_sel);
             x2 = x1;
             y2 = ones(size(y1)) * wor_thr;
-            %Find values of intersection of 2 curves
+%             Find values of intersection of 2 curves
             [x_worintersect, y_worintersect] = intersections(x1, y1, x2, y2);
             time_start_wor= x_worintersect(1);
             value_start_wor= y_worintersect(1);
             
             clear t t_1 t_2 t_sel
             
-            %store values
+%             store values
             real_time_wor=time_start_wor-t_VentOn;
             
             
@@ -337,7 +337,7 @@ for irat= 1:size(cfg,2)
             stats_all{irat}.WoR.start_time(ichan,itrial)=  real_time_wor;
             stats_all{irat}.WoR.start_slope_value(ichan,itrial)=value_start_wor;
             
-            %plot for visual control
+%             plot for visual control
             
             fig_wodthr= figure;
             plot(WOD_cut.time{itrial},WOD_cut.trial{itrial}(ichan,:));
@@ -367,8 +367,8 @@ for irat= 1:size(cfg,2)
             
             
             clear x_wodintersect x_worintersect detectstart_wod detectstart_wor fname_wodstart fname_worstart
-            %% Determine Half-width of waves
-            
+%             % Determine Half-width of waves
+%             
 %             %Calculate half amplitude of waves
 %             wod_amp= -v_peak_wod -y_wodintersect(1);
 %             %wor_amp= v_peak_wor - y_worintersect(1);
@@ -395,8 +395,8 @@ for irat= 1:size(cfg,2)
 %             
 %             
 %             clear x1 y1 x2 y2
-            
-            %WOR
+%             
+%             WOR
 %             t = WOR_cut.time{itrial};
 %             t_1 = t > (t_peak_wor - 20);
 %             t_2 = t < (t_peak_wor + 20);
@@ -408,7 +408,7 @@ for irat= 1:size(cfg,2)
 %             y2 = ones(size(y1)) * half_wor;
 %             [x_worintersect, y_worintersect] = intersections(x1, y1, x2, y2);
 %             
-            
+%             
 %             if cfg{irat}.LFP.recov{itrial}==0
 %                 WOR_halfwi=nan;
 %             elseif size(x_worintersect,1)>2
@@ -418,19 +418,19 @@ for irat= 1:size(cfg,2)
 %             end
 %             
 %             clear x1 y1 x2 y2
-            
-            %Store data
-            
-            
-            
+%             
+%             Store data
+%             
+%             
+%             
 %             stats_all{irat}.WoD.half_width(ichan,itrial)=WOD_halfwi;
-            
-          
-            
+%             
+%           
+%             
 %             stats_all{irat}.WoR.half_width(ichan,itrial)=WOR_halfwi;
-
-            %plot for visual control
-            
+% 
+%             plot for visual control
+%             
 %             fig_wodhalf=figure;
 %             plot(WOD_cut.time{itrial},WOD_cut.trial{itrial}(ichan,:));
 %             hold on
@@ -460,15 +460,18 @@ for irat= 1:size(cfg,2)
 %             
 %             dtx_savefigure(fig_wodhalf,fname_wodhalf,'png','pdf','close');
 %             dtx_savefigure(fig_worhalf,fname_worhalf,'png','pdf','close');
-            
-            
+%             
+%             
 %             clear x_wodintersect x_worintersect y_wodintersect y_worintersect
             
             %% Create structure with electrode depths
-
+            
+            if irat>17
+                cfg{irat}.LFP.chan_depth=flip(cfg{irat}.LFP.chan_depth);
+            end
+            
             stats_all{irat}.Depth(ichan,itrial)=cfg{irat}.LFP.chan_depth{ichan};
             
-            %security to exclude measurements for protocols without Wor
 
         end %ichan
         
