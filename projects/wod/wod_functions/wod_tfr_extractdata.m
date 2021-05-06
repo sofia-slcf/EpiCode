@@ -15,7 +15,12 @@ analysis_names={'timefreq_wod','timefreq_wod_timenorm','timefreq_wod_blcorrected
 %% Prepare structure to analyze
 
 for idata= 1: size(analysis_names,2)
-    for irat= 4:size(cfg,2)
+    for irat= 1:size(cfg,2)
+        
+        if isempty(cfg{irat})
+            continue
+        end
+        
         cfgcommon = cfg{4}; %same common config for all rats
         
         fprintf('Load timefreq data for rat %d/%d\n', irat,size(cfg,2));
@@ -82,6 +87,12 @@ for idata= 1: size(analysis_names,2)
                         t_peak.(iband).(chan_name)= NaN;
                     end
                     
+                    [v_peak.ratio.(chan_name), t_peak.ratio.(chan_name)]= findpeaks(Ratio.(chan_name).powspctrm,pow.(iband).(chan_name).time,'NPeaks',1,'SortStr','descend','WidthReference','Halfheight');
+                    if isempty([v_peak.(iband).(chan_name), t_peak.(iband).(chan_name)])
+                        v_peak.ratio.(chan_name)= NaN;
+                        t_peak.ratio.(chan_name)= NaN;
+                    end
+                    
                     %plot detection of peaks
                     %                     fig= figure;
                     %                     plot(pow.(iband).(chan_name).time,pow.(iband).(chan_name).powspctrm)
@@ -92,7 +103,8 @@ for idata= 1: size(analysis_names,2)
                     
                     freq_data{irat}.(analysis_names{idata}).peak_time.(iband)(ichan,itrial)=  t_peak.(iband).(chan_name);
                     freq_data{irat}.(analysis_names{idata}).peak_value.(iband)(ichan,itrial)=  v_peak.(iband).(chan_name);
-
+                    freq_data{irat}.(analysis_names{idata}).peak_ratio_time(ichan,itrial)=t_peak.ratio.(chan_name);
+                    freq_data{irat}.(analysis_names{idata}).peak_ratio_value(ichan,itrial)=v_peak.ratio.(chan_name);
                     
                 end %ichan
                 

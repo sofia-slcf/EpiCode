@@ -14,26 +14,6 @@ end
 detectiondatapath= fullfile(cfg{4}.datasavedir,'Detection');
 load(fullfile(detectiondatapath,'calculated_data.mat'),'Data_waves');
 
-for irat= 1:size(cfg,2)
-    
-    if isempty(cfg{irat})
-        continue
-    end
-    
-    for iwave= ["WOD" "WOR"]
-        for iana= ["peak_time" "min_slope" "start_time"]
-            
-            first_trial= Data_waves{irat}.(iwave).(iana)
-            
-            
-        end %iana
-    end %iwave
-end %irat
-
-
-
-
-
 %% Make statiscal analysis between trials
 
 % origin time and depth
@@ -112,6 +92,6 @@ Stats.pval_trials=p_val_trials;
 Stats.adj_pval_trials=adj_pval_trials;
 
 
-save(fullfile(detect_stats_dir,'tests_mean_calculated_data.mat'),'Stats');
+save(fname_out,'Stats');
 
 end %function

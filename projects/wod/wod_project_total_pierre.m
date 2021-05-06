@@ -22,35 +22,34 @@ end
 
 ft_defaults
 
-config = wod_setparams_32chan;
-cfgorig = config;
+config = wod_setparams_ouabaine;
 
 ipart= 1;
 
 
-
-for irat =8:10%8:size(config,2)
-        %% load data and compute time freq
-        
-        
-        if isempty(config{irat})
-            continue
-        end
-        
-        
-        
+%% Read LFP rat by rat
+for irat = 1:4%size(config,2)
         %find concatenated LFP (see wod_concatenateLFP.m)
-        [~,dir_name]                       = fileparts(fullfile(config{irat}.concatdata_path,config{irat}.prefix));
-        config{irat}.rawdir                = fullfile(config{irat}.concatdata_path);
-        config{irat}.directorylist{ipart}   = {dir_name};
+        config{irat}.rawdir                = config{irat}.concatdata_path;
+        config{irat}.directorylist{ipart}  = {config{irat}.prefix};
         
         %read Muse markers
         MuseStruct               = readMuseMarkers(config{irat},true);
         
+        %add new markers AD_post
+%         cfgtemp=[];
+%         cfgtemp.editmarkerfile.toadd={'AD_post_START','AD_post_END'};
+%         
+%         MuseStruct= editMuseMarkers(cfgtemp,MuseStruct);
+%         datapath_out = fullfile(config{irat}.rawdir, config{irat}.directorylist{1}{1}, 'Events.mrk');
+%         writeMuseMarkerfile(MuseStruct{1}{1}, datapath_out);
+
+        
+        
         %read LFP. T0 = Vent_Off. Each trial is one protocol
-        %if exist(name_ica, 'file')
-        %   load(name_ica)
-        %else
+%         if exist(name_ica, 'file')
+%           load(name_ica)
+%         else
         LFP = readLFP(config{irat}, MuseStruct, true);
         LFP = LFP{1}.(config{irat}.LFP.name{1}); %remove this 'epicode' organisation for now.
         %end
@@ -77,3 +76,14 @@ for irat =8:10%8:size(config,2)
             end
         end
 end %irat
+
+%% Analysis by rat
+
+
+
+%% Analysis for all rats
+
+stats_all= ouaba_wavedetection(config,true);
+
+
+

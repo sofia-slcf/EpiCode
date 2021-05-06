@@ -75,9 +75,9 @@ for ipart = 1:size(MuseStruct,2)
             events(ievent).EventString = strrep(events(ievent).EventString, '>', '_');
         end
         
-%         cfgtemp                      = [];
-%         cfgtemp.editmarkerfile.toremove = unique({events.EventString});
-%         MuseStruct                   = editMuseMarkers(cfgtemp, MuseStruct);
+        cfgtemp                      = [];
+        cfgtemp.editmarkerfile.toremove = unique({events.EventString});
+        MuseStruct                   = editMuseMarkers(cfgtemp, MuseStruct);
         
         %add events to MuseStruct
         cfgtemp                      = [];

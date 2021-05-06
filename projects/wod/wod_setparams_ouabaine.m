@@ -31,7 +31,7 @@ script_path  = fileparts(script_path);
 configcommon.muse.templatemarker   = fullfile(datasavedir,'TemplateEventsWOD.mrk');%find the template file to create muse marker file
 
 configcommon.name                  = {'WoD'};
-configcommon.LFP.allchannel        = {'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP'};
+configcommon.LFP.allchannel        = {'E32LFP','E31LFP','E30LFP','E29LFP','E28LFP','E27LFP','E26LFP','E25LFP','E24LFP','E23LFP','E22LFP','E21LFP','E20LFP','E19LFP','E18LFP','E17LFP','E16LFP','E15LFP','E14LFP','E13LFP','E12LFP','E11LFP','E10LFP','E09LFP','E08LFP','E07LFP'};
 configcommon.LFP.name              = configcommon.name;
 
 configcommon.muse.backupdir            = fullfile(datasavedir,'Backup_MuseMarker');
@@ -70,8 +70,7 @@ config{1}.rawdir              = fullfile(rootpath_data,'2021_03_17_OUABA');     
 
 config{1}.directorylist{1}    = {'2021-03-17_18-05', '2021-03-17_18-26'}; %liste de tous les fichiers, tous les protocoles
 config{1}.LFP.channel         = {'E32LFP','E31LFP','E30LFP','E29LFP','E28LFP','E27LFP','E26LFP','E25LFP','E24LFP','E23LFP','E22LFP','E21LFP','E20LFP','E19LFP','E18LFP','E17LFP','E16LFP','E15LFP','E14LFP','E13LFP','E12LFP','E11LFP'};
-config{1}.LFP.rename          = {'E31', 'E30', 'E29', 'E28', 'E27', 'E26', 'E25', 'E24', 'E23', 'E22', 'E21', 'E20', 'E19', 'E18', 'E17',...
-    'E16', 'E15', 'E14', 'E13', 'E12', 'E11', 'E10'};
+config{1}.LFP.rename          = {'E31', 'E30', 'E29', 'E28', 'E27', 'E26', 'E25', 'E24', 'E23', 'E22', 'E21', 'E20', 'E19', 'E18', 'E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11', 'E10'};
 config{1}.LFP.chan_depth      =  {161,261,361,461,561,661,761,861,961,1061,1161,1261,1361,1461,1561,1661,1761,1861,1961,2061,2161,2261} ;                                                           % true depth channels
 config{1}.LFP.inject_depth    = 853;
 
@@ -151,7 +150,7 @@ config{5}.prefix              = 'Rat-06_04_2021-';                              
 config{5}.rawdir              = fullfile(rootpath_data,'2021_04_06_OUABA');                       %path to patient data
 
 config{5}.directorylist{1}    = {'2021-04-06_13-36', '2021-04-06_16-28', '2021-04-06_17-39'}; %liste de tous les fichiers, tous les protocoles
-config{5}.LFP.channel         = {'E29LFP','E28LFP','E27LFP','E26LFP','E25LFP','E24LFP','E23LFP','E22LFP','E21LFP','E20LFP','E19LFP','E18LFP','E17LFP','E16LFP','E15LFP','E14LFP','E13LFP','E12LFP','E11LFP','E10LFP','E9LFP','E8LFP','E7LFP'};
+config{5}.LFP.channel         = {'E29LFP','E28LFP','E27LFP','E26LFP','E25LFP','E24LFP','E23LFP','E22LFP','E21LFP','E20LFP','E19LFP','E18LFP','E17LFP','E16LFP','E15LFP','E14LFP','E13LFP','E12LFP','E11LFP','E10LFP','E09LFP','E08LFP','E07LFP'};
 config{5}.LFP.rename          = {'E32','E31','E30','E29','E28','E27','E26','E25','E24','E23','E22','E21','E20','E19','E18','E17','E16','E15','E14','E13','E12','E11','E10'};
 config{5}.LFP.chan_depth      = {101,201,301,401,501,601,701,801,901,1001,1101,1201,1301,1401,1501,1601,1701,1801,1901,2001,2101,2201,2301};                                                           % true depth channels
 config{5}.LFP.inject_depth    = 900;
