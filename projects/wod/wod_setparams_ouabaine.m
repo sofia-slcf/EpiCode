@@ -31,7 +31,7 @@ script_path  = fileparts(script_path);
 configcommon.muse.templatemarker   = fullfile(datasavedir,'TemplateEventsWOD.mrk');%find the template file to create muse marker file
 
 configcommon.name                  = {'WoD'};
-configcommon.LFP.allchannel        = {'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP'};
+configcommon.LFP.allchannel        = {'E32LFP','E31LFP','E30LFP','E29LFP','E28LFP','E27LFP','E26LFP','E25LFP','E24LFP','E23LFP','E22LFP','E21LFP','E20LFP','E19LFP','E18LFP','E17LFP','E16LFP','E15LFP','E14LFP','E13LFP','E12LFP','E11LFP','E10LFP','E09LFP','E08LFP','E07LFP'};
 configcommon.LFP.name              = configcommon.name;
 configcommon.LFP.reref             = 'no';
 
@@ -80,7 +80,6 @@ configcommon.circus.postfix      = []; % after using circus-gui-matlab's SAVE nu
 % 
 % config{1}.circus.channel      = {'E04', 'E04', 'E11'};       %name of the first electrode
 % config{1}.circus.rename       = {'E2', 'E4', 'E11'};       %name of the first electrode
-
 
 %% rat 2
 % config{2}                     = configcommon;

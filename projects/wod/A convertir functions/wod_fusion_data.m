@@ -8,12 +8,6 @@ if exist(fname_out, 'file') && force == false
 end
 
 
-%concat data
-temp=load(fullfile(cfg{4}.datasavedir,'Detection', sprintf('wod_wavedetection_allrats.mat')));
-stats=temp.stats;
-clear temp
-
-
 %% Arrange structure for 32 chan 
 
 %FIXME: need WOD_data, WOR_data, Instan_Speed, Peak_time_freqband,

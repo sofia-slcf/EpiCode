@@ -29,7 +29,7 @@ ipart= 1;
 
 
 
-for irat = 10%8:size(config,2)
+for irat =8:10%8:size(config,2)
         %% load data and compute time freq
         
         

@@ -28,7 +28,8 @@ ipart= 1;
 
 
 %% Read LFP rat by rat
-for irat = 5%size(config,2)
+
+for irat = 2:4%size(config,2)
         %find concatenated LFP (see wod_concatenateLFP.m)
         config{irat}.rawdir                = config{irat}.concatdata_path;
         config{irat}.directorylist{ipart}  = {config{irat}.prefix};
@@ -82,6 +83,7 @@ end %irat
 
 
 %% Analysis for all rats
+
 
 %stats_all= ouaba_wavedetection(config,true);
 
