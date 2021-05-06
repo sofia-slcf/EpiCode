@@ -18,7 +18,7 @@ for irat= 1:size(cfg,2)
     temp= load(fullfile(cfg{irat}.datasavedir,sprintf('%s%s_%s.mat',cfg{irat}.prefix,'LFP',cfg{irat}.name{1})));
     LFP=temp.LFP{1,1}.WoD;
     clear temp
-    MuseStruct               = readMuseMarkers(cfg{irat}, false);
+    MuseStruct               = readMuseMarkers(cfg{irat}, true);
     
     %vérifier qu'il y a bien autant de trials que de marqueurs Vent_Off
     startmarker = cfg{irat}.muse.startmarker.(cfg{irat}.LFP.name{1});
@@ -83,6 +83,8 @@ for irat= 1:size(cfg,2)
             [v_peak_wod, t_peak_wod] = findpeaks(-LFP_lpfilt.trial{itrial}(chan_idx,t_sel),t(t_sel),'NPeaks',1,'SortStr','descend','WidthReference','Halfheight');
             clear t t_1 t_2 t_sel
             
+            
+            Amp_wod{irat}(ichan,itrial)= v_peak_wod;
             
             %store peak timings per channel in structure
             stats_all{irat}.WoD.peak_time(ichan,itrial)= t_peak_wod
@@ -278,6 +280,15 @@ for irat= 1:size(cfg,2)
 
             stats_all{irat}.Depth(ichan,itrial)=cfg{irat}.LFP.chan_depth{ichan};
         end %ichan
+        
+        
+        %Non-WoD channels exclusion 
+        for ichan=1:size(LFP.label,1)
+            if Amp_wod{irat}(ichan,itrial)< 0.2*max(Amp_wod{irat}(:,itrial)
+                 Amp_wod{irat}(ichan,itrial)= nan;
+            end
+        end %ichan
+        
         
     end %itrial
 end %irat
