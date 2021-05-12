@@ -3,7 +3,7 @@ function ordered_data=wod_fusion_data(data,cfg,force)
 %load data
 fname_out = fullfile(cfg{4}.datasavedir,'Detection', sprintf('wod_wavedetection_allprobes.mat'));
 if exist(fname_out, 'file') && force == false
-    load(fname_out, 'stats');
+    load(fname_out, 'ordered_data');
     return
 end
 
@@ -12,9 +12,8 @@ end
 
 %load data for 16 and 32 chans
 
-stats_concat.ratname = [];
-depth_start = 0;
-depth_end = 3200; %µm
+depth_start = 10;
+depth_end = 3210; %µm
 depth_step = 100;
 
 icol = 0;

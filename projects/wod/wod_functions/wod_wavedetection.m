@@ -129,13 +129,13 @@ for irat= 1:size(cfg,2)
             plot(LFP_lpfilt.time{itrial},LFP_lpfilt.trial{itrial}(ichan,:));
             hold on
             scatter(t_peak_wod,-v_peak_wod,'x');
-            xlim([t_peak_wod-10 t_peak_wod+10]);
+            xlim([t_peak_wod-30 t_peak_wod+30]);
             
             fig_worpeak= figure;
             plot(LFP_lpfilt.time{itrial},LFP_lpfilt.trial{itrial}(ichan,:));
             hold on
             scatter(t_peak_wor,v_peak_wor,'x');
-            xlim([t_peak_wor-10 t_peak_wor+10]);
+            xlim([t_peak_wor-20 t_peak_wor+20]);
             
             detectsavedir=fullfile(cfg{irat}.imagesavedir,'detection');
             detectpeak_wod=fullfile(detectsavedir,'WoD','peak',sprintf('%s',cfg{irat}.prefix));
@@ -465,11 +465,7 @@ for irat= 1:size(cfg,2)
 %             clear x_wodintersect x_worintersect y_wodintersect y_worintersect
             
             %% Create structure with electrode depths
-            
-            if irat>17
-                cfg{irat}.LFP.chan_depth=flip(cfg{irat}.LFP.chan_depth);
-            end
-            
+                                 
             stats_all{irat}.Depth(ichan,itrial)=cfg{irat}.LFP.chan_depth{ichan};
             
 

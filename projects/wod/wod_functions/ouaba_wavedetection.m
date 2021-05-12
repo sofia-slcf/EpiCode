@@ -252,7 +252,7 @@ for irat= 1:size(cfg,2)
             
             stats_all{irat}.WoD.half_width(ichan,itrial)=WOD_halfwi;
 
-            plot for visual control
+            %plot for visual control
             
             fig_wodhalf=figure;
             plot(WOD_cut.time{itrial},WOD_cut.trial{itrial}(ichan,:));
