@@ -109,6 +109,10 @@ for idata= 1: size(analysis_names,2)
 %                     freq_data{irat}.(analysis_names{idata}).peak_ratio_time(ichan,itrial)=t_peak.ratio.(chan_name);
 %                     freq_data{irat}.(analysis_names{idata}).peak_ratio_value(ichan,itrial)=v_peak.ratio.(chan_name);
 %                     end
+                
+                %add Depth 
+                freq_data{irat}.Depth(ichan,itrial)=  cfg{irat}.LFP.chan_depth{ichan};
+
                 end %ichan
                 
                 %un plot avec toutes les électrodes de la bande + toutes
@@ -128,6 +132,9 @@ for idata= 1: size(analysis_names,2)
                 %save figures
                 fname= fullfile(cfg{4}.imagesavedir_data{2},'detection',sprintf('%sWOD%i_%s_%s',cfg{irat}.prefix,itrial,iband,analysis_names{idata}));
                 dtx_savefigure(fig,fname,'png','pdf','close');
+            
+            
+                
             end %iband
         end %itrial
     end %irat

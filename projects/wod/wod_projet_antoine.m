@@ -91,24 +91,28 @@ end %if slurm_task_id
 if slurm_task_id==0
 %% Analysis for pooled rats
 
-
+%% Waves delay data
 %Detect waves, extract timings and values
-stats_all=wod_wavedetection([config16, config32],true);
+stats_all=wod_wavedetection([config16, config32],false);
 
 %extract origin depth, timing, propagation speed. make stats between
 %protocols and between waves.
-%calculated_data= wod_propag_analysis([config16 config32],false);
+calculated_data= wod_propag_analysis([config16 config32],false);
 
 %gather 16 and 32 chans
-%ordered_data = wod_fusion_data(stats_all,[config16 config32],false);
+ordered_data = wod_fusion_data(stats_all,[config16 config32],false);
 
 %plot delays
-%wod_plot_delays(ordered_data,config16);
+wod_plot_delays(ordered_data,config16);
 %
 
+%% Frequency band data
 
 %extract peak time and value for power bands
-%freq_data=wod_tfr_extractdata([config16, config32],true);
+freq_data=wod_tfr_extractdata([config16, config32],true);
+
+%gather 16 and 32 chans
+ordered_freqdata = wod_fusion_freqdata(freq_data,[config16 config32],true);
 
 %plot freq data
 
