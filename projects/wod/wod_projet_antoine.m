@@ -66,7 +66,7 @@ MuseStruct = readMuseMarkers(config{irat}, false);
 save(fullfile(config{irat}.datasavedir,sprintf('%s-MuseStruct.mat',config{irat}.prefix)),'MuseStruct');
 
 %read LFP, append electrodes, and cut into trials according to Muse Markers
-LFP = readLFP(config{irat}, MuseStruct, false);
+LFP = readLFP(config{irat}, MuseStruct, true);
 LFP = LFP{1}.(config{irat}.LFP.name{1}); %remove this 'epicode' organisation for now.
 %end
 %vérifier qu'il y a bien autant de trials que de marqueurs Vent_Off
@@ -80,7 +80,7 @@ end
 wod_tfr_compute(config{irat}, MuseStruct,LFP);
 
 %Plot TFR data for each rat
-wod_tfr_plotrat(config{irat});
+%wod_tfr_plotrat(config{irat});
 
 
 
@@ -93,14 +93,14 @@ if slurm_task_id==0
 
 %% Waves delay data
 %Detect waves, extract timings and values
-stats_all=wod_wavedetection([config16, config32],false);
+stats_all=wod_wavedetection([config16, config32],true);
 
 %extract origin depth, timing, propagation speed. make stats between
 %protocols and between waves.
-calculated_data= wod_propag_analysis([config16 config32],false);
+calculated_data= wod_propag_analysis([config16 config32],true);
 
 %gather 16 and 32 chans
-ordered_data = wod_fusion_data(stats_all,[config16 config32],false);
+ordered_data = wod_fusion_data(stats_all,[config16 config32],true);
 
 %plot delays
 wod_plot_delays(ordered_data,config16);
@@ -112,7 +112,7 @@ wod_plot_delays(ordered_data,config16);
 freq_data=wod_tfr_extractdata([config16, config32],true);
 
 %gather 16 and 32 chans
-ordered_freqdata = wod_fusion_freqdata(freq_data,[config16 config32],true);
+%ordered_freqdata = wod_fusion_freqdata(freq_data,[config16 config32],true);
 
 %plot freq data
 

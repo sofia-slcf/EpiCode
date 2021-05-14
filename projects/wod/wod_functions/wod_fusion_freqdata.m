@@ -35,11 +35,11 @@ for idepth = depth_start:depth_step:depth_end %step de 250 car les électrodes so
 %                         continue
 %                     end
                     if sum(sel) == 1
-                        ordered_data.(iwave).(ifield)(irow, icol) = data{irat}.(iwave).(ifield)(sel, itrial);
-                        ordered_data.Depth(irow,icol)= data{irat}.Depth(sel,itrial);
+                        ordered_freqdata.(analysis_names{idata}).(iana).(ifield)(irow, icol) = data{irat}.(iwave).(ifield)(sel, itrial);
+                        ordered_freqdata.Depth(irow,icol)= data{irat}.Depth(sel,itrial);
                     elseif sum(sel) == 0
-                        ordered_data.(iwave).(ifield)(irow, icol) = nan;
-                        ordered_data.Depth(irow,icol)= nan;
+                        ordered_freqdata.(analysis_names{idata}).(iana).(ifield)(irow, icol) = nan;
+                        ordered_freqdata.Depth(irow,icol)= nan;
 
                     elseif sum(sel) > 1
                         error('it should have only one electrode for one deepness');

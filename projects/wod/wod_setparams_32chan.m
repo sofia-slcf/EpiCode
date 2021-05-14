@@ -176,6 +176,7 @@ config{5}.LFP.chan_depth      = {119.3,	219.3,	319.3,	419.3,	519.3,	619.3,	719.3
 config{5}.LFP.origin_WoD          = {'E14', 'E14'};
 config{5}.LFP.origin_WoR          = {'E11', 'E11'};
 config{5}.LFP.recov               = {1,0};
+config{5}.epoch.toi.WoD           = [-600 2500];
 
 
 

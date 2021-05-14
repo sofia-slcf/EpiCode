@@ -276,8 +276,61 @@ for iwave= ["WoD" "WoR"]
         dtx_savefigure(fig_meannorm,fname_meannorm,'png','pdf','close');
         
         
+       
+
+        
     end %itime
 end %iwave
+
+
+ %% Plot WoD & WoR normalized peak time on same graph
+        
+        
+         for irat=1:size(ordered_data.WoD.(itime), 1)
+            data_plot_wodnorm(irat,:)=ordered_data_interp.WoD.peak_time(irat,:) -min(ordered_data_interp.WoD.peak_time(irat,:));
+            data_plot_wornorm(irat,:)=ordered_data_interp.WoR.peak_time(irat,:) -min(ordered_data_interp.WoR.peak_time(irat,:));
+
+         end %irat
+        
+        %calculate median and standard deviation
+        for ichan= 1:22%size(ordered_data.(iwave).(itime),2)
+            data_std_wodnorm(1,ichan)= std(ordered_data_interp.WoD.peak_time(:,ichan),'omitnan');
+            data_mean_wodnorm(1,ichan)=nanmean(data_plot_wodnorm(:,ichan));
+            data_sem_wodnorm=data_std_wodnorm / (sqrt(length(data_plot_wodnorm)));
+            data_std_wornorm(1,ichan)= std(ordered_data_interp.WoR.peak_time(:,ichan),'omitnan');
+            data_mean_wornorm(1,ichan)=nanmean(data_plot_wornorm(:,ichan));
+            data_sem_wornorm=data_std_wornorm / (sqrt(length(data_plot_wornorm)));
+            
+        end %ichan
+        
+        
+        
+        
+        fig_wodwor= figure;hold
+        sgtitle(sprintf('Waves peak normalized time mean'));
+        
+        C_biswod= C_med{1};
+        C_terwod= C_std{1};
+        
+        C_biswor= C_med{2};
+        C_terwor= C_std{2};
+        
+        plot(data_mean_wodnorm,data_mean_depth,'Color',C_biswod,'LineWidth',1.5);
+        patch([data_mean_wodnorm- data_sem_wodnorm, data_mean_wodnorm(end:-1:1)+ data_sem_wodnorm(end:-1:1)], [data_mean_depth, data_mean_depth(end:-1:1)], C_terwod, 'facealpha', 0.3, 'edgecolor', 'none');
+
+        plot(data_mean_wornorm,data_mean_depth,'Color',C_biswor,'LineWidth',1.5);
+        patch([data_mean_wornorm- data_sem_wornorm, data_mean_wornorm(end:-1:1)+ data_sem_wornorm(end:-1:1)], [data_mean_depth, data_mean_depth(end:-1:1)], C_terwor, 'facealpha', 0.3, 'edgecolor', 'none');
+
+        
+        ylim([0 2200]);
+        xlim([-10 30]);
+        
+        
+        fname_2wave= fullfile(cfg{4}.imagesavedir,'delays',sprintf('two_waves_mean_norm'));
+        dtx_savefigure(fig_wodwor,fname_2wave,'png','pdf','close');
+
+
+
 
 end %function
  
