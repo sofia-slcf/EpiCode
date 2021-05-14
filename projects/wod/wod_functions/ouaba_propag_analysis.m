@@ -24,22 +24,21 @@ for irat= 1:size(cfg,2)
     
     
     irat_name=sprintf('Rat_%i',irat);
-    for iwave=["WoD" "WoR"]
         for itime= ["peak_time" "min_slope_time" "start_time"]
-            for itrial= 1:size(stats_all{irat}.(iwave).peak_time,2)
+            for itrial= 1:size(stats_all{irat}.WoD.peak_time,2)
                 %% WOD Find origin and store origin depth and timings
                 
                 %excluse trials without WoR
-                if iwave== "WoR" & isnan(stats_all{irat}.(iwave).(itime)(:,itrial))
+                if iwave== "WoR" & isnan(stats_all{irat}.WoD.(itime)(:,itrial))
                     continue
                 end
                 
-                A=stats_all{irat}.(iwave).(itime)(:,itrial);
+                A=stats_all{irat}.WoD.(itime)(:,itrial);
                 B= stats_all{irat}.Depth(:,itrial);
                 %find minimum timing
                 origin_time=min(A);
                 %store minimum timing in structure
-                calculated_data.(iwave).origin_time.(itime)(irat,itrial)=origin_time;
+                calculated_data.WoD.origin_time.(itime)(irat,itrial)=origin_time;
                 
                 %find index of origin and get origin depth
                 idx_origin=find(A==origin_time);
@@ -53,7 +52,7 @@ for irat= 1:size(cfg,2)
                     idx_origin=idx_origin(2);
                 end
                 
-                calculated_data.(iwave).origin_depth.(itime)(irat,itrial)=origin_depth;
+                calculated_data.WoD.origin_depth.(itime)(irat,itrial)=origin_depth;
                 
                 %% WOD Calculate propagation speed
                 
@@ -90,10 +89,10 @@ for irat= 1:size(cfg,2)
                 end
                 %Average and store values
                 if bool_up==1
-                    calculated_data.(iwave).speed.(itime).up(irat,itrial)=nanmean(Speed_up);
+                    calculated_data.WoD.speed.(itime).up(irat,itrial)=nanmean(Speed_up);
                 end
                 if bool_down==1
-                    calculated_data.(iwave).speed.(itime).down(irat,itrial)=nanmean(Speed_down);
+                    calculated_data.WoD.speed.(itime).down(irat,itrial)=nanmean(Speed_down);
                 end
                 
                 %% WOD Calculate Instantaneous speed
@@ -114,7 +113,7 @@ for irat= 1:size(cfg,2)
                     Speed_instan(ichan,1)= (B(ichan+1,1)-B(ichan,1))/(A(ichan+1,1)-A(ichan,1));
                 end %ichan
                 
-                Speed_instant{irat}.(iwave).(itime)(:,itrial)=Speed_instan;
+                Speed_instant{irat}.WoD.(itime)(:,itrial)=Speed_instan;
                 
                 
                 
@@ -122,7 +121,6 @@ for irat= 1:size(cfg,2)
                 
             end %itrial
         end %itime
-    end %iwave
 end %irat
 
 %% Replace all 0 values by NaNs
@@ -131,8 +129,8 @@ end %irat
 for iwave=["WoD" "WoR"]
     for iana= ["origin_time" "origin_depth"]
         for itime= ["peak_time" "min_slope_time" "start_time"]
-            idx=find(calculated_data.(iwave).(iana).(itime)(:,:)==0);
-            calculated_data.(iwave).(iana).(itime)(idx)=NaN;
+            idx=find(calculated_data.WoD.(iana).(itime)(:,:)==0);
+            calculated_data.WoD.(iana).(itime)(idx)=NaN;
         end %itime
     end %iana
 end %iwave
@@ -141,9 +139,9 @@ end %iwave
 for iwave=["WoD" "WoR"]
     for itime= ["peak_time" "min_slope_time" "start_time"]
         for isens= ["down" "up"]
-            idx=find(calculated_data.(iwave).speed.(itime).(isens)(:,:)==0);
-            calculated_data.(iwave).speed.(itime).(isens)= abs(calculated_data.(iwave).speed.(itime).(isens));
-            calculated_data.(iwave).speed.(itime).(isens)(idx)=NaN;
+            idx=find(calculated_data.WoD.speed.(itime).(isens)(:,:)==0);
+            calculated_data.WoD.speed.(itime).(isens)= abs(calculated_data.WoD.speed.(itime).(isens));
+            calculated_data.WoD.speed.(itime).(isens)(idx)=NaN;
         end %isens
     end %itime
 end %iwave

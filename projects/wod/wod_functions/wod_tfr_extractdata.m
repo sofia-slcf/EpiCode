@@ -57,10 +57,9 @@ for idata= 1: size(analysis_names,2)
                     
                     % Select frequencies and define time window to search
                     % peak
-                    
-                    t1=data_rat.(chan_name).time(1)+10;
-                    t2=data_rat.(chan_name).time(end)-30;
-                    tsearch= [t1 t2];
+                    t1=data_rat.(chan_name).time(1)+(data_rat.(chan_name).time(end)/10);
+                    t2=data_rat.(chan_name).time(end)-(data_rat.(chan_name).time(end)/10);
+                    tsearch= [t1  t2];
                     
                     cfgtemp= [];
                     cfgtemp.latency= tsearch;
@@ -72,11 +71,11 @@ for idata= 1: size(analysis_names,2)
                     pow.(iband).(chan_name).powspctrm = nanmean(pow.(iband).(chan_name).powspctrm,1);
                     pow.(iband).(chan_name).time= pow.(iband).(chan_name).time;
                     
-                    if iband == "LF"
-                        Ratio.(chan_name)= pow.(iband).(chan_name);
-                        Ratio.(chan_name).powspctrm= pow.(iband).(chan_name).powspctrm ./ pow.HF.(chan_name).powspctrm;
-                    end
-                    
+                    %                     if iband == "LF"
+                    %                         Ratio.(chan_name)= pow.(iband).(chan_name);
+                    %                         Ratio.(chan_name).powspctrm= pow.(iband).(chan_name).powspctrm ./ pow.HF.(chan_name).powspctrm;
+                    %                     end
+                    %
                     
                     %% find peak value and peak time
                     
@@ -87,12 +86,14 @@ for idata= 1: size(analysis_names,2)
                         t_peak.(iband).(chan_name)= NaN;
                     end
                     
-                    [v_peak.ratio.(chan_name), t_peak.ratio.(chan_name)]= findpeaks(Ratio.(chan_name).powspctrm,pow.(iband).(chan_name).time,'NPeaks',1,'SortStr','descend','WidthReference','Halfheight');
-                    if isempty([v_peak.(iband).(chan_name), t_peak.(iband).(chan_name)])
-                        v_peak.ratio.(chan_name)= NaN;
-                        t_peak.ratio.(chan_name)= NaN;
-                    end
-                    
+                    %
+                    %                     if iband=="LF"
+                    %                     [v_peak.ratio.(chan_name), t_peak.ratio.(chan_name)]= findpeaks(Ratio.(chan_name).powspctrm,pow.(iband).(chan_name).time,'NPeaks',1,'SortStr','descend','WidthReference','Halfheight');
+                    %                     if isempty([v_peak.(iband).(chan_name), t_peak.(iband).(chan_name)])
+                    %                         v_peak.ratio.(chan_name)= NaN;
+                    %                         t_peak.ratio.(chan_name)= NaN;
+                    %                     end
+                    %                     end
                     %plot detection of peaks
                     %                     fig= figure;
                     %                     plot(pow.(iband).(chan_name).time,pow.(iband).(chan_name).powspctrm)
@@ -103,8 +104,13 @@ for idata= 1: size(analysis_names,2)
                     
                     freq_data{irat}.(analysis_names{idata}).peak_time.(iband)(ichan,itrial)=  t_peak.(iband).(chan_name);
                     freq_data{irat}.(analysis_names{idata}).peak_value.(iband)(ichan,itrial)=  v_peak.(iband).(chan_name);
-                    freq_data{irat}.(analysis_names{idata}).peak_ratio_time(ichan,itrial)=t_peak.ratio.(chan_name);
-                    freq_data{irat}.(analysis_names{idata}).peak_ratio_value(ichan,itrial)=v_peak.ratio.(chan_name);
+                    
+                    %                     if iband=="LF"
+                    %                     freq_data{irat}.(analysis_names{idata}).peak_ratio_time(ichan,itrial)=t_peak.ratio.(chan_name);
+                    %                     freq_data{irat}.(analysis_names{idata}).peak_ratio_value(ichan,itrial)=v_peak.ratio.(chan_name);
+                    %                     end
+                    
+                    
                     
                 end %ichan
                 
@@ -125,7 +131,19 @@ for idata= 1: size(analysis_names,2)
                 %save figures
                 fname= fullfile(cfg{4}.imagesavedir_data{2},'detection',sprintf('%sWOD%i_%s_%s',cfg{irat}.prefix,itrial,iband,analysis_names{idata}));
                 dtx_savefigure(fig,fname,'png','pdf','close');
+                
+                
+                
             end %iband
+            %add Depth
+            
+            for ichan=1:numel(chan_list)
+                if ichan > size(cfg{irat}.LFP.chan_depth,2)
+                    freq_data{irat}.Depth(ichan,itrial)=nan;
+                else
+                    freq_data{irat}.Depth(ichan,itrial)=  cfg{irat}.LFP.chan_depth{ichan};
+                end
+            end %ichan
         end %itrial
     end %irat
 end %idata

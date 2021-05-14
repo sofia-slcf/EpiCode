@@ -12,19 +12,19 @@ end
 %% Load and pool calculated data
 
 detectiondatapath= fullfile(cfg{4}.datasavedir,'Detection');
-load(fullfile(detectiondatapath,'calculated_data.mat'),'Data_waves');
+load(fullfile(detectiondatapath,'calculated_data.mat'),'calculated_data');
 
 %% Make statiscal analysis between trials
 
 % origin time and depth
-for iwave=["WOD" "WOR"]
+for iwave=["WoD" "WoR"]
     for iana= ["origin_time" "origin_depth"]
         count=0;
-        for itime= ["peak_time" "min_slope" "start_time"]
+        for itime= ["peak_time" "min_slope_time" "start_time"]
             count= count+1;
             %separate trials as different arrays
-            first_trial=Data_waves.(iwave).(iana).(itime)(:,1);
-            second_trial=Data_waves.(iwave).(iana).(itime)(:,2);
+            first_trial=calculated_data.(iwave).(iana).(itime)(:,1);
+            second_trial=calculated_data.(iwave).(iana).(itime)(:,2);
             %t-test between trials
             p=signrank(first_trial,second_trial);
             p_val_trials.(iwave).(iana)(count,1)=p;
@@ -37,16 +37,16 @@ end %iwave
 clear first_trial second_trial
 
 %same operation for average propagation speed
-for iwave=["WOD" "WOR"]
-    for itime= ["peak_time" "min_slope" "start_time"]
+for iwave=["WoD" "WoR"]
+    for itime= ["peak_time" "min_slope_time" "start_time"]
         count=0;
         
         for isens=["up" "down"]
             
             count=count+1;
             %separate trials as different arrays
-            first_trial=Data_waves.(iwave).speed.(itime).(isens)(:,1);
-            second_trial=Data_waves.(iwave).speed.(itime).(isens)(:,2);
+            first_trial=calculated_data.(iwave).speed.(itime).(isens)(:,1);
+            second_trial=calculated_data.(iwave).speed.(itime).(isens)(:,2);
             %t-test between trials
             p=ranksum(first_trial,second_trial);
             p_val_trials.(iwave).speed.(itime).(isens)(count,1)=p;
@@ -60,14 +60,14 @@ end %iwave
 
 for iana= ["origin_time" "origin_depth"]
     count=0;
-    for itime= ["peak" "min_slope" "start"]
+    for itime= ["peak_time" "min_slope_time" "start_time"]
         count= count+1;
-        wod_first_trial=Data_waves.WOD.(iana).(itime)(:,1);
-        wod_second_trial=Data_waves.WOD.(iana).(itime)(:,2);
+        wod_first_trial=calculated_data.WoD.(iana).(itime)(:,1);
+        wod_second_trial=calculated_data.WoD.(iana).(itime)(:,2);
         wod_alltrials=vertcat(wod_first_trial,wod_second_trial);
         
-        wor_first_trial=Data_waves.WOR.(iana).(itime)(:,1);
-        wor_second_trial=Data_waves.WOR.(iana).(itime)(:,2);
+        wor_first_trial=calculated_data.WoR.(iana).(itime)(:,1);
+        wor_second_trial=calculated_data.WoR.(iana).(itime)(:,2);
         wor_alltrials=vertcat(wor_first_trial,wor_second_trial);
         
         p=signrank(wod_alltrials,wor_alltrials);
