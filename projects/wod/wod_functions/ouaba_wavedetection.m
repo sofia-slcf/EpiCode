@@ -18,7 +18,7 @@ for irat= 1:size(cfg,2)
     temp= load(fullfile(cfg{irat}.datasavedir,sprintf('%s%s_%s.mat',cfg{irat}.prefix,'LFP',cfg{irat}.name{1})));
     LFP=temp.LFP{1,1}.WoD;
     clear temp
-    MuseStruct               = readMuseMarkers(cfg{irat}, true);
+    MuseStruct               = readMuseMarkers(cfg{irat}, false);
     
     %vérifier qu'il y a bien autant de trials que de marqueurs Vent_Off
     startmarker = cfg{irat}.muse.startmarker.(cfg{irat}.LFP.name{1});
@@ -32,6 +32,7 @@ for irat= 1:size(cfg,2)
         label_renamed{idx} = cfg{irat}.LFP.rename{ichan};
     end
     LFP.label = label_renamed';
+    clear label_renamed
     
     
     %remove breathing and ekg channel
@@ -99,6 +100,7 @@ for irat= 1:size(cfg,2)
            
             detectsavedir=fullfile(cfg{irat}.imagesavedir,'detection');
             detectpeak_wod=fullfile(detectsavedir,'WoD','peak',sprintf('%s',cfg{irat}.prefix));
+            detectpeak_wor=fullfile(detectsavedir,'WoR','peak',sprintf('%s',cfg{irat}.prefix));
             
             if ~isfolder(detectsavedir)
                 mkdir(detectsavedir);
@@ -254,7 +256,7 @@ for irat= 1:size(cfg,2)
             
             stats_all{irat}.WoD.half_width(ichan,itrial)=WOD_halfwi;
 
-            plot for visual control
+            %plot for visual control
             
             fig_wodhalf=figure;
             plot(WOD_cut.time{itrial},WOD_cut.trial{itrial}(ichan,:));
@@ -284,7 +286,7 @@ for irat= 1:size(cfg,2)
         
         %Non-WoD channels exclusion 
         for ichan=1:size(LFP.label,1)
-            if Amp_wod{irat}(ichan,itrial)< 0.2*max(Amp_wod{irat}(:,itrial)
+            if Amp_wod{irat}(ichan,itrial)< 0.2*max(Amp_wod{irat}(:,itrial))
                  Amp_wod{irat}(ichan,itrial)= nan;
             end
         end %ichan

@@ -1,3 +1,7 @@
+function ouaba_projet_pierre(slurm_task_id)
+
+
+
 try %en local
     scriptpath = matlab.desktop.editor.getActiveFilename;
 catch %cluster
@@ -28,8 +32,15 @@ ipart= 1;
 
 
 %% Read LFP rat by rat
-
-for irat = 2:4%size(config,2)
+if slurm_task_id >0
+    for irat = slurm_task_id%size(config,2)
+        
+        if isempty(config{irat})
+            continue
+        end
+        
+        
+        
         %find concatenated LFP (see wod_concatenateLFP.m)
         config{irat}.rawdir                = config{irat}.concatdata_path;
         config{irat}.directorylist{ipart}  = {config{irat}.prefix};
@@ -38,24 +49,24 @@ for irat = 2:4%size(config,2)
         MuseStruct               = readMuseMarkers(config{irat},true);
         
         %add new markers AD_post
-%         cfgtemp=[];
-%         cfgtemp.editmarkerfile.toadd={'AD_post_START','AD_post_END'};
-%         
-%         MuseStruct= editMuseMarkers(cfgtemp,MuseStruct);
-%         datapath_out = fullfile(config{irat}.rawdir, config{irat}.directorylist{1}{1}, 'Events.mrk');
-%         writeMuseMarkerfile(MuseStruct{1}{1}, datapath_out);
-
+        %         cfgtemp=[];
+        %         cfgtemp.editmarkerfile.toadd={'AD_post_START','AD_post_END'};
+        %
+        %         MuseStruct= editMuseMarkers(cfgtemp,MuseStruct);
+        %         datapath_out = fullfile(config{irat}.rawdir, config{irat}.directorylist{1}{1}, 'Events.mrk');
+        %         writeMuseMarkerfile(MuseStruct{1}{1}, datapath_out);
+        
         
         
         %read LFP. T0 = Vent_Off. Each trial is one protocol
-%         if exist(name_ica, 'file')
-%           load(name_ica)
-%         else
+        %         if exist(name_ica, 'file')
+        %           load(name_ica)
+        %         else
         LFP = readLFP(config{irat}, MuseStruct, true);
         LFP = LFP{1}.(config{irat}.LFP.name{1}); %remove this 'epicode' organisation for now.
         %end
         
-%         %vérifier qu'il y a bien autant de trials que de marqueurs Vent_Off
+        %         %vérifier qu'il y a bien autant de trials que de marqueurs Vent_Off
         startmarker = config{irat}.muse.startmarker.(config{irat}.LFP.name{1});
         if size(LFP.trial,2) ~= size(MuseStruct{1}{1}.markers.(startmarker).synctime,2)
             error('Not the same number of trials that of marker start for %s. \nCheck that begin/end of each trial is not before start of file or after end of file', config{irat}.prefix(1:end-1));
@@ -76,16 +87,25 @@ for irat = 2:4%size(config,2)
                 LFP.label{chan_idx} = new_name;
             end
         end
-end %irat
-
+    end %irat
+end %slurm_task_id
 %% Analysis by rat
 
 
-
+if slurm_task_id==0
 %% Analysis for all rats
 
 
-%stats_all= ouaba_wavedetection(config,true);
+stats_all= ouaba_wavedetection(config,true);
 
+%calculated_data= ouaba_propag_analysis(config,true);
 
+% fig = figure;
+% plot(1:5, 1:5);
+%
+% set(fig,'Renderer','Painters');
+% print(fig, '-dpdf', figurepath,'-r600');
 
+end %slurm_task_id
+
+end %function
