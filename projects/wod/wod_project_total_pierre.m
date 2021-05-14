@@ -98,7 +98,7 @@ if slurm_task_id==0
 
 stats_all= ouaba_wavedetection(config,true);
 
-%calculated_data= ouaba_propag_analysis(config,true);
+calculated_data= ouaba_propag_analysis(config,true);
 
 % fig = figure;
 % plot(1:5, 1:5);
