@@ -1,6 +1,13 @@
-function stats = ouaba_wavedetection(cfg, force)
+function stats_all = ouaba_wavedetection(cfg, force)
 
-fname_out = fullfile(cfg{4}.datasavedir,'Detection', sprintf('ouaba_wavedetection_allrats.mat'));
+fname_out = fullfile(cfg{3}.datasavedir,'Detection', sprintf('ouaba_wavedetection_allrats.mat'));
+
+if cfg{3}.LFP.inject_depth <2000 && size(cfg,2)<8
+    fname_out = fullfile(cfg{3}.datasavedir,'Detection', sprintf('ouaba_wavedetection_allrats900.mat'));
+elseif size(cfg,2)<8
+    fname_out = fullfile(cfg{3}.datasavedir,'Detection', sprintf('ouaba_wavedetection_allrats2000.mat'));
+end
+
 if exist(fname_out, 'file') && force == false
     load(fname_out, 'stats_all');
     return
@@ -11,6 +18,8 @@ for irat= 1:size(cfg,2)
     if isempty(cfg{irat})
         continue
     end
+    
+    
     
     iratname= sprintf('Rat_%i',irat);
     
@@ -25,13 +34,14 @@ for irat= 1:size(cfg,2)
     if size(LFP.trial,2) ~= size(MuseStruct{1}{1}.markers.(startmarker).synctime,2)
         error('Not the same number of trials that of marker start for %s. \nCheck that begin/end of each trial is not before start of file or after end of file', cfg{irat}.prefix(1:end-1));
     end
- 
+    
     %rename channels according to depth
     for ichan = 1:size(cfg{irat}.LFP.channel, 2)
         idx = strcmp(cfg{irat}.LFP.channel{ichan}, LFP.label);
         label_renamed{idx} = cfg{irat}.LFP.rename{ichan};
     end
     LFP.label = label_renamed';
+    clear label_renamed
     
     
     %remove breathing and ekg channel
@@ -84,6 +94,8 @@ for irat= 1:size(cfg,2)
             clear t t_1 t_2 t_sel
             
             
+            Amp_wod{irat}(ichan,itrial)= v_peak_wod;
+            
             %store peak timings per channel in structure
             stats_all{irat}.WoD.peak_time(ichan,itrial)= t_peak_wod
             
@@ -94,9 +106,10 @@ for irat= 1:size(cfg,2)
             scatter(t_peak_wod,-v_peak_wod,'x');
             xlim([t_peak_wod-10 t_peak_wod+10]);
             
-           
+            
             detectsavedir=fullfile(cfg{irat}.imagesavedir,'detection');
             detectpeak_wod=fullfile(detectsavedir,'WoD','peak',sprintf('%s',cfg{irat}.prefix));
+            detectpeak_wor=fullfile(detectsavedir,'WoR','peak',sprintf('%s',cfg{irat}.prefix));
             
             if ~isfolder(detectsavedir)
                 mkdir(detectsavedir);
@@ -148,7 +161,7 @@ for irat= 1:size(cfg,2)
             
             stats_all{irat}.WoD.min_slope_time(ichan,itrial)=  t_peak_wodslope;
             stats_all{irat}.WoD.min_slope_value(ichan,itrial)=   -v_peak_wodslope;
-
+            
             %plot for visual control
             
             fig_wodslope=figure;
@@ -156,7 +169,7 @@ for irat= 1:size(cfg,2)
             hold on
             scatter(t_peak_wodslope,-v_peak_wodslope,'x');
             xlim([t_peak_wod-10 t_peak_wod+10]);
-        
+            
             detectslope_wod=fullfile(detectsavedir,'WoD','slope',sprintf('%s',cfg{irat}.prefix));
             
             if ~isfolder(detectsavedir)
@@ -167,18 +180,18 @@ for irat= 1:size(cfg,2)
                 mkdir(detectslope_wod);
             end
             
-          
+            
             fname_wodslope=fullfile(detectslope_wod,sprintf('%s_WoD%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
-           
+            
             dtx_savefigure(fig_wodslope,fname_wodslope,'png','pdf','close');
-           
-            clear fname_wodslope detectslope_wod 
+            
+            clear fname_wodslope detectslope_wod
             
             %% Determine threshold and crossing points
             
             %calculate threshold 20% of max slope
             wod_thr= -0.2*v_peak_wodslope;
-          
+            
             %Determine crossing point
             %define time window
             t = WOD_cut.time{itrial};
@@ -199,7 +212,7 @@ for irat= 1:size(cfg,2)
             
             clear t t_1 t_2 t_sel
             
-           
+            
             %store values
             
             stats_all{irat}.WoD.start_time(ichan,itrial)=time_start_wod;
@@ -210,27 +223,27 @@ for irat= 1:size(cfg,2)
             fig_wodthr= figure;
             plot(WOD_cut.time{itrial},WOD_cut.trial{itrial}(ichan,:));
             xline(time_start_wod);
-                                   
+            
             detectstart_wod=fullfile(detectsavedir,'WoD','start',sprintf('%s',cfg{irat}.prefix));
             
             if ~isfolder(detectstart_wod)
                 mkdir(detectstart_wod);
             end
             
-         
+            
             fname_wodstart=fullfile(detectstart_wod,sprintf('%s_WoD%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
             
             dtx_savefigure(fig_wodthr,fname_wodstart,'png','pdf','close');
             
             
-            clear x_wodintersect  detectstart_wod  fname_wodstart 
+            clear x_wodintersect  detectstart_wod  fname_wodstart
             %% Determine Half-width of waves
             
             %Calculate half amplitude of waves
             wod_amp= -v_peak_wod -y_wodintersect(1);
             half_wod= wod_amp/2;
             
-            clear y_wodintersect  x_wodintersect 
+            clear y_wodintersect  x_wodintersect
             %Determine time window to search
             %WOD
             
@@ -251,7 +264,7 @@ for irat= 1:size(cfg,2)
             %Store data
             
             stats_all{irat}.WoD.half_width(ichan,itrial)=WOD_halfwi;
-
+            
             %plot for visual control
             
             fig_wodhalf=figure;
@@ -259,27 +272,45 @@ for irat= 1:size(cfg,2)
             hold on
             scatter(x_wodintersect,y_wodintersect,'rx')
             yline(half_wod);
-
+            
             
             detecthalf_wod=fullfile(detectsavedir,'WoD','half-width',sprintf('%s',cfg{irat}.prefix));
             
             if ~isfolder(detecthalf_wod)
                 mkdir(detecthalf_wod);
             end
-
+            
             fname_wodhalf=fullfile(detecthalf_wod,sprintf('%s_WoD%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
             
             dtx_savefigure(fig_wodhalf,fname_wodhalf,'png','pdf','close');
             
             
-            clear x_wodintersect  y_wodintersect 
+            clear x_wodintersect  y_wodintersect
             
             %% Create structure with electrode depths
-
+            
             stats_all{irat}.Depth(ichan,itrial)=cfg{irat}.LFP.chan_depth{ichan};
         end %ichan
         
+        
+        %Non-WoD channels exclusion
+        for ichan=1:size(LFP.label,1)
+            if Amp_wod{irat}(ichan,itrial)< 0.2*max(Amp_wod{irat}(:,itrial))
+                Amp_wod{irat}(ichan,itrial)= nan;
+            end
+        end %ichan
+        
+        idx_nan= find(isnan(Amp_wod{irat}));
+        name_fields=fieldnames(stats_all{irat}.WoD)';
+        for ifield= 1:size(name_fields,2)
+            
+            stats_all{irat}.WoD.(name_fields{ifield})(idx_nan)=nan;
+            
+            
+        end %ifield
+        
     end %itrial
+    
 end %irat
 
 
