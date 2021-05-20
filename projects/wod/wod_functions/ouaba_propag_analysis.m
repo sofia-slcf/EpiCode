@@ -1,20 +1,23 @@
-function calculated_data= wod_propag_analysis(cfg,force)
+function calculated_data= ouaba_propag_analysis(data,cfg,force)
 
 
 detectiondatapath= fullfile(cfg{4}.datasavedir,'Detection');
-
-
 fname_out=fullfile(detectiondatapath,'calculated_data.mat');
+fname_speed= fullfile(detectiondatapath,'instant_speed.mat');
+if cfg{3}.LFP.inject_depth <2000 && size(cfg,2)<8
+    fname_out = fullfile(cfg{3}.datasavedir,'Detection', sprintf('calculated_data900.mat'));
+    fname_speed= fullfile(cfg{3}.datasavedir,'Detection', sprintf('instant_speed900.mat'));
+elseif size(cfg,2)<8
+    fname_out = fullfile(cfg{3}.datasavedir,'Detection', sprintf('calculated_data2000.mat'));
+    fname_speed= fullfile(cfg{3}.datasavedir,'Detection', sprintf('instant_speed2000.mat'));
+
+end
+
 if exist(fname_out, 'file') && force == false
     load(fname_out, 'calculated_data');
     return
 end
 
-
-%% loading data
-temp= load(fullfile(detectiondatapath,'wod_wavedetection_allrat'));
-stats_all=temp.stats_all;
-clear temp
 
 for irat= 1:size(cfg,2)
     
@@ -25,16 +28,11 @@ for irat= 1:size(cfg,2)
     
     irat_name=sprintf('Rat_%i',irat);
         for itime= ["peak_time" "min_slope_time" "start_time"]
-            for itrial= 1:size(stats_all{irat}.WoD.peak_time,2)
+            for itrial= 1:size(data{irat}.WoD.peak_time,2)
                 %% WOD Find origin and store origin depth and timings
-                
-                %excluse trials without WoR
-                if iwave== "WoR" & isnan(stats_all{irat}.WoD.(itime)(:,itrial))
-                    continue
-                end
-                
-                A=stats_all{irat}.WoD.(itime)(:,itrial);
-                B= stats_all{irat}.Depth(:,itrial);
+
+                A=data{irat}.WoD.(itime)(:,itrial);
+                B= data{irat}.Depth(:,itrial);
                 %find minimum timing
                 origin_time=min(A);
                 %store minimum timing in structure
@@ -42,7 +40,7 @@ for irat= 1:size(cfg,2)
                 
                 %find index of origin and get origin depth
                 idx_origin=find(A==origin_time);
-                origin_depth=stats_all{irat}.Depth(idx_origin,itrial);
+                origin_depth=data{irat}.Depth(idx_origin,itrial);
                 %store origin depth
                 
                 %security for 2 origin depth
@@ -147,8 +145,8 @@ for iwave=["WoD" "WoR"]
 end %iwave
 
 
-save(fullfile(detectiondatapath,'calculated_data.mat'),'calculated_data');
-save(fullfile(detectiondatapath,'instant_speed.mat'),'Speed_instant')
+save(fname_out,'calculated_data');
+save(fname_speed,'Speed_instant')
 
 
 
