@@ -116,72 +116,72 @@ config{2}.circus.rename       = {'E2', 'E4', 'E11'};       %name of the first el
 
 config{2}.timefreq.toi.long   = [-600 500]; %modif
 
-%% rat 3
-config{3}                     = configcommon;
-config{3}.datasavedir         = datasavedir;       %path where to save MuseStruct data
-config{3}.imagesavedir        = imagesavedir;
-config{3}.imagesavedir_data   = imagesavedir_data;
-config{3}.prefix              = 'Rat-2021_03_10';                                              %patient name. Must end by "-". namepatient-
-config{3}.rawdir              = fullfile(rootpath_data,'2021_03_10_WOD');                       %path to patient data
+% %% rat 3
+% config{3}                     = configcommon;
+% config{3}.datasavedir         = datasavedir;       %path where to save MuseStruct data
+% config{3}.imagesavedir        = imagesavedir;
+% config{3}.imagesavedir_data   = imagesavedir_data;
+% config{3}.prefix              = 'Rat-2021_03_10';                                              %patient name. Must end by "-". namepatient-
+% config{3}.rawdir              = fullfile(rootpath_data,'2021_03_10_WOD');                       %path to patient data
+% 
+% config{3}.directorylist{1}    = {'2021-03-10_15-53', '2021-03-10_17-25','2021-03-10_18-48'}; %liste de tous les fichiers, tous les protocoles
+% %config{3}.LFP.channel         = {[], [], 'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP', 'E07LFP', 'E06LFP', 'E05LFP', 'E04LFP', 'E03LFP','Puff'};
+% config{3}.LFP.channel         = { 'E32','E31','E30','E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12'};
+% config{3}.LFP.rename          = {'E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11'};
+% config{3}.LFP.chan_depth      = {215, 315, 415,	515, 615, 715, 815, 915, 1015, 1115, 1215, 1315, 1415, 1515, 1615, 1715, 1815, 1915, 2015, 2115, 2215};
+% config{3}.LFP.origin_WoD          = {'E14', 'E14'};
+% config{3}.LFP.origin_WoR          = {'E11', 'E11'};
+% config{3}.LFP.recov               = {1,1};
+% 
+% config{3}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
+% config{3}.circus.rename       = {'E2', 'E4', 'E11'};
 
-config{3}.directorylist{1}    = {'2021-03-10_15-53', '2021-03-10_17-25','2021-03-10_18-48'}; %liste de tous les fichiers, tous les protocoles
-%config{3}.LFP.channel         = {[], [], 'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP', 'E07LFP', 'E06LFP', 'E05LFP', 'E04LFP', 'E03LFP','Puff'};
-config{3}.LFP.channel         = { 'E32','E31','E30','E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12'};
-config{3}.LFP.rename          = {'E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11'};
-config{3}.LFP.chan_depth      = {215, 315, 415,	515, 615, 715, 815, 915, 1015, 1115, 1215, 1315, 1415, 1515, 1615, 1715, 1815, 1915, 2015, 2115, 2215};
-config{3}.LFP.origin_WoD          = {'E14', 'E14'};
-config{3}.LFP.origin_WoR          = {'E11', 'E11'};
-config{3}.LFP.recov               = {1,1};
-
-config{3}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
-config{3}.circus.rename       = {'E2', 'E4', 'E11'};
-
-%% rat 4
-config{4}                     = configcommon;
-config{4}.datasavedir         = datasavedir;       %path where to save MuseStruct data
-config{4}.imagesavedir        = imagesavedir;
-config{4}.imagesavedir_data   = imagesavedir_data;
-config{4}.prefix              = 'Rat-2021_03_05';                                              %patient name. Must end by "-". namepatient-
-config{4}.rawdir              = fullfile(rootpath_data,'2021_03_05_WOD');                       %path to patient data
-
-config{4}.directorylist{1}    = {'2021-03-05_15-20'}; %liste de tous les fichiers, tous les protocoles
-%config{4}.LFP.channel         = {[], [], 'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP', 'E07LFP', 'E06LFP', 'E05LFP', 'E04LFP', 'E03LFP','Puff'};
-config{4}.LFP.channel         = { 'E31','E30','E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11','E10'};
-config{4}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11'};
-config{4}.LFP.chan_depth      = {103, 203, 303,	403, 503, 603, 703,	803, 903, 1003,	1103, 1203,	1303, 1403,	1503, 1603,	1703, 1803,	1903, 2003,	2103, 2203};
-config{4}.LFP.origin_WoD          = {'E14', 'E14'};
-config{4}.LFP.origin_WoR          = {'E11', 'E11'};
-config{4}.LFP.recov               = {0,0};
-
-config{4}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
-config{4}.circus.rename       = {'E2', 'E4', 'E11'};
-
-config{4}.timefreq.toi.long           =  [-600 3000]; % time window suroundging time of interst trial 2 smaller than configcommon
-config{4}.timefreq.toi.short           = [-600 500];
-
-
-%% rat 5
-config{5}                     = configcommon;
-config{5}.datasavedir         = datasavedir;       %path where to save MuseStruct data
-config{5}.imagesavedir        = imagesavedir;
-config{5}.imagesavedir_data   = imagesavedir_data;
-config{5}.prefix              = 'Rat-2021_02_18';                                              %patient name. Must end by "-". namepatient-
-config{5}.rawdir              = fullfile(rootpath_data,'2021_02_18_WOD');                       %path to patient data
-
-config{5}.directorylist{1}    = {'2021-02-18_15-54','2021-02-18_17-54'}; %liste de tous les fichiers, tous les protocoles
-%config{5}.LFP.channel         = {[], [], 'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP', 'E07LFP', 'E06LFP', 'E05LFP', 'E04LFP', 'E03LFP','Puff'};
-config{5}.LFP.channel         = { 'E31','E30','E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11','E10'};
-config{5}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11'};
-config{5}.LFP.chan_depth      = {119.3,	219.3,	319.3,	419.3,	519.3,	619.3,	719.3,	819.3,	919.3,	1019.3,	1119.3,	1219.3,	1319.3,	1419.3,	1519.3,	1619.3, 1719.3,	1819.3,	1919.3, 2019.3,	2119.3,	2219.3};
-config{5}.LFP.origin_WoD          = {'E14', 'E14'};
-config{5}.LFP.origin_WoR          = {'E11', 'E11'};
-config{5}.LFP.recov               = {1,0};
-config{5}.epoch.toi.WoD           = [-600 2500];
+% %% rat 4
+% config{4}                     = configcommon;
+% config{4}.datasavedir         = datasavedir;       %path where to save MuseStruct data
+% config{4}.imagesavedir        = imagesavedir;
+% config{4}.imagesavedir_data   = imagesavedir_data;
+% config{4}.prefix              = 'Rat-2021_03_05';                                              %patient name. Must end by "-". namepatient-
+% config{4}.rawdir              = fullfile(rootpath_data,'2021_03_05_WOD');                       %path to patient data
+% 
+% config{4}.directorylist{1}    = {'2021-03-05_15-20'}; %liste de tous les fichiers, tous les protocoles
+% %config{4}.LFP.channel         = {[], [], 'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP', 'E07LFP', 'E06LFP', 'E05LFP', 'E04LFP', 'E03LFP','Puff'};
+% config{4}.LFP.channel         = { 'E31','E30','E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11','E10'};
+% config{4}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11'};
+% config{4}.LFP.chan_depth      = {103, 203, 303,	403, 503, 603, 703,	803, 903, 1003,	1103, 1203,	1303, 1403,	1503, 1603,	1703, 1803,	1903, 2003,	2103, 2203};
+% config{4}.LFP.origin_WoD          = {'E14', 'E14'};
+% config{4}.LFP.origin_WoR          = {'E11', 'E11'};
+% config{4}.LFP.recov               = {0,0};
+% 
+% config{4}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
+% config{4}.circus.rename       = {'E2', 'E4', 'E11'};
+% 
+% config{4}.timefreq.toi.long           =  [-600 3000]; % time window suroundging time of interst trial 2 smaller than configcommon
+% config{4}.timefreq.toi.short           = [-600 500];
 
 
-
-config{5}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
-config{5}.circus.rename       = {'E2', 'E4', 'E11'};
+% %% rat 5
+% config{5}                     = configcommon;
+% config{5}.datasavedir         = datasavedir;       %path where to save MuseStruct data
+% config{5}.imagesavedir        = imagesavedir;
+% config{5}.imagesavedir_data   = imagesavedir_data;
+% config{5}.prefix              = 'Rat-2021_02_18';                                              %patient name. Must end by "-". namepatient-
+% config{5}.rawdir              = fullfile(rootpath_data,'2021_02_18_WOD');                       %path to patient data
+% 
+% config{5}.directorylist{1}    = {'2021-02-18_15-54','2021-02-18_17-54'}; %liste de tous les fichiers, tous les protocoles
+% %config{5}.LFP.channel         = {[], [], 'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP', 'E07LFP', 'E06LFP', 'E05LFP', 'E04LFP', 'E03LFP','Puff'};
+% config{5}.LFP.channel         = { 'E31','E30','E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11','E10'};
+% config{5}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11'};
+% config{5}.LFP.chan_depth      = {119.3,	219.3,	319.3,	419.3,	519.3,	619.3,	719.3,	819.3,	919.3,	1019.3,	1119.3,	1219.3,	1319.3,	1419.3,	1519.3,	1619.3, 1719.3,	1819.3,	1919.3, 2019.3,	2119.3,	2219.3};
+% config{5}.LFP.origin_WoD          = {'E14', 'E14'};
+% config{5}.LFP.origin_WoR          = {'E11', 'E11'};
+% config{5}.LFP.recov               = {1,0};
+% config{5}.epoch.toi.WoD           = [-600 2000];
+% 
+% 
+% 
+% config{5}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first electrode
+% config{5}.circus.rename       = {'E2', 'E4', 'E11'};
 
 
 %% rat 6
@@ -205,24 +205,24 @@ config{6}.circus.channel      = {'E02', 'E04', 'E11'};       %name of the first 
 config{6}.circus.rename       = {'E2', 'E4', 'E11'};
 
 %% %%%% les rats de pierre
-%% rat 7
-config{7}                     = configcommon;
-config{7}.datasavedir         = datasavedir;       %path where to save MuseStruct data
-config{7}.imagesavedir        = imagesavedir;
-config{7}.imagesavedir_data   = imagesavedir_data;
-config{7}.prefix              = 'Rat-2021_02_12';                                              %patient name. Must end by "-". namepatient-
-config{7}.rawdir              = fullfile(rootpath_data,'2021_02_12_WOD');                       %path to patient data
-config{7}.directorylist{1}    = {'2021-02-12_18-00','2021-02-12_20-00'}; %liste de tous les fichiers, tous les protocoles
-%config{6}.LFP.channel         = {[], [], 'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP', 'E07LFP', 'E06LFP', 'E05LFP', 'E04LFP', 'E03LFP','Puff'};
-config{7}.LFP.channel         = { 'E32','E31','E30','E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12'};
-config{7}.LFP.rename          = {'E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11'};
-config{7}.LFP.chan_depth      = {201, 301, 401, 501, 601, 701, 801, 901, 1001, 1101, 1201, 1301, 1401, 1501, 1601, 1701, 1801, 1901, 2001, 2101, 2201};
-config{7}.LFP.origin_WoD          = {'E14', 'E14'};
-config{7}.LFP.origin_WoR          = {'E11', 'E11'};
-config{7}.LFP.recov               = {1,1};
-
-config{7}.circus.channel      = { 'E5', 'E6' ,'E10','E12', 'E17', 'E18', 'E19' ,'E20' ,'E22' ,'E24' ,'E28'};       %name of the first electrode
-config{7}.circus.rename       = {};
+% %% rat 7
+% config{7}                     = configcommon;
+% config{7}.datasavedir         = datasavedir;       %path where to save MuseStruct data
+% config{7}.imagesavedir        = imagesavedir;
+% config{7}.imagesavedir_data   = imagesavedir_data;
+% config{7}.prefix              = 'Rat-2021_02_12';                                              %patient name. Must end by "-". namepatient-
+% config{7}.rawdir              = fullfile(rootpath_data,'2021_02_12_WOD');                       %path to patient data
+% config{7}.directorylist{1}    = {'2021-02-12_18-00','2021-02-12_20-00'}; %liste de tous les fichiers, tous les protocoles
+% %config{6}.LFP.channel         = {[], [], 'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP', 'E07LFP', 'E06LFP', 'E05LFP', 'E04LFP', 'E03LFP','Puff'};
+% config{7}.LFP.channel         = { 'E32','E31','E30','E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12'};
+% config{7}.LFP.rename          = {'E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11'};
+% config{7}.LFP.chan_depth      = {201, 301, 401, 501, 601, 701, 801, 901, 1001, 1101, 1201, 1301, 1401, 1501, 1601, 1701, 1801, 1901, 2001, 2101, 2201};
+% config{7}.LFP.origin_WoD          = {'E14', 'E14'};
+% config{7}.LFP.origin_WoR          = {'E11', 'E11'};
+% config{7}.LFP.recov               = {1,1};
+% 
+% config{7}.circus.channel      = { 'E5', 'E6' ,'E10','E12', 'E17', 'E18', 'E19' ,'E20' ,'E22' ,'E24' ,'E28'};       %name of the first electrode
+% config{7}.circus.rename       = {};
 
 %% rat 8
 config{8}                      = configcommon;
@@ -245,25 +245,25 @@ config{8}.timefreq.toi.short           = [-600 500];
 config{8}.circus.channel      = {'E11', 'E13', 'E20' ,'E21' ,'E22' ,'E23', 'E28', 'E30'};       %name of the first electrode
 config{8}.circus.rename       = {};
 
-%% rat 9
-config{9}                       = configcommon;
-config{9}.datasavedir         = datasavedir;       %path where to save MuseStruct data
-config{9}.imagesavedir        = imagesavedir;
-config{9}.imagesavedir_data   = imagesavedir_data;
-config{9}.prefix              = 'Rat-2021_03_04';                                              %patient name. Must end by "-". namepatient-
-config{9}.rawdir              = fullfile(rootpath_data,'2021_03_04_WOD');                       %path to patient data
-config{9}.directorylist{1}    = {'2021-03-04_18-25'}; %liste de tous les fichiers, tous les protocoles
-%config{6}.LFP.channel         = {[], [], 'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP', 'E07LFP', 'E06LFP', 'E05LFP', 'E04LFP', 'E03LFP','Puff'};
-config{9}.LFP.channel         = {'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11','E10', 'E09', 'E08', 'E07', 'E06', 'E05','E04', 'E03', 'E02', 'E01'};
-config{9}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12'};
-config{9}.LFP.chan_depth      = {135, 235, 335, 435, 535, 635, 735, 835 ,935 , 1035, 1135, 1235 , 1335, 1435, 1535, 1635, 1735, 1835, 1935, 2035, 2135};
-config{9}.LFP.origin_WoD          = {'E14', 'E14'};
-config{9}.LFP.origin_WoR          = {'E11', 'E11'};
-config{9}.LFP.recov               = {1,1};
-
-
-config{9}.circus.channel      = {'E01', 'E02', 'E03','E04', 'E05', 'E06'};       %name of the first electrode
-config{9}.circus.rename       = {};
+% %% rat 9
+% config{9}                       = configcommon;
+% config{9}.datasavedir         = datasavedir;       %path where to save MuseStruct data
+% config{9}.imagesavedir        = imagesavedir;
+% config{9}.imagesavedir_data   = imagesavedir_data;
+% config{9}.prefix              = 'Rat-2021_03_04';                                              %patient name. Must end by "-". namepatient-
+% config{9}.rawdir              = fullfile(rootpath_data,'2021_03_04_WOD');                       %path to patient data
+% config{9}.directorylist{1}    = {'2021-03-04_18-25'}; %liste de tous les fichiers, tous les protocoles
+% %config{6}.LFP.channel         = {[], [], 'E16LFP', 'E15LFP', 'E14LFP', 'E13LFP', 'E12LFP', 'E11LFP', 'E10LFP', 'E09LFP', 'E08LFP', 'E07LFP', 'E06LFP', 'E05LFP', 'E04LFP', 'E03LFP','Puff'};
+% config{9}.LFP.channel         = {'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12', 'E11','E10', 'E09', 'E08', 'E07', 'E06', 'E05','E04', 'E03', 'E02', 'E01'};
+% config{9}.LFP.rename          = {'E32','E31','E30', 'E29', 'E28','E27', 'E26', 'E25', 'E24','E23', 'E22', 'E21', 'E20', 'E19', 'E18','E17','E16', 'E15', 'E14', 'E13', 'E12'};
+% config{9}.LFP.chan_depth      = {135, 235, 335, 435, 535, 635, 735, 835 ,935 , 1035, 1135, 1235 , 1335, 1435, 1535, 1635, 1735, 1835, 1935, 2035, 2135};
+% config{9}.LFP.origin_WoD          = {'E14', 'E14'};
+% config{9}.LFP.origin_WoR          = {'E11', 'E11'};
+% config{9}.LFP.recov               = {1,1};
+% 
+% 
+% config{9}.circus.channel      = {'E01', 'E02', 'E03','E04', 'E05', 'E06'};       %name of the first electrode
+% config{9}.circus.rename       = {};
 
 %% rat 10
 config{10}                        = configcommon;
