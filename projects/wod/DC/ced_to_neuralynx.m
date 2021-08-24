@@ -34,7 +34,7 @@ config = eval(configscript);
 chanlist= ["DC", "Vm"]; %chanlist double DC
 chanlist= ["Vm","EEG-S1-L","Im"]; %chanlist Intra
 
-for iprot= 1:size(config,2)
+for iprot= 13:15%size(config,2)
     datapath = char(fullfile(config{iprot}.rawdir,config{iprot}.directorylist{1}));
     
     CEDStruct = readCEDevents(datapath);
@@ -43,13 +43,12 @@ for iprot= 1:size(config,2)
         data = readCEDwaveforms(datapath, channame);
         
         
-        if configscript=='DC_setparams'
         [folder, file, extension] = fileparts(datapath);
         Neurlynx_datapath= fullfile(folder,'Neuralynx_data');
         
         %Resample channels to have same samplerate for both
         cfgtemp= [];
-        cfgtemp.resamplefs      = config{iprot}.Intra.resamplefs;
+        cfgtemp.resamplefs      = config{iprot}.DC.resamplefs;
         cfgtemp.detrend         = 'no';
         data                    = ft_resampledata(cfgtemp,data);
         
@@ -74,7 +73,6 @@ for iprot= 1:size(config,2)
         
         fprintf('\nWriting data in Neuralynx format with Fieldtrip : %s \n',header.filename);
         ft_write_data(header.filename,data.trial{1},'header',header, 'dataformat','neuralynx_ncs');
-        end %if
         
         
         
@@ -155,26 +153,6 @@ for iprot= 1:size(config,2)
         save(fullfile(mat_datapath,sprintf('%s_%s.%s',config{iprot}.directorylist{1}{1},channame,'mat')),'data_raw');
         save(fullfile(mat_datapath,sprintf('%s_%s_%s.%s',config{iprot}.directorylist{1}{1},channame,'filt','mat')),'data_filt');
         save(fullfile(mat_datapath,sprintf('%s_%s_%s.%s',config{iprot}.directorylist{1}{1},channame,'events','mat')),'CEDStruct');
-        
-        
-        %
-        %         %Create high-pass filtered data at 0.1Hz with butterworth to compare filters
-        %         cfgtemp= [];
-        %         cfgtemp.hpfilter= 'yes';
-        %         cfgtemp.hpfreq= 0.1;
-        %         cfgtemp.hpfilttype = 'but';
-        %         cfgtemp.hpinstabilityfix = 'reduce';
-        %         data_filt_but = ft_preprocessing(cfgtemp, data_raw);
-        %
-        %
-        %         fig=figure; hold on;
-        %         plot(data_raw.time{1}, data_raw.trial{1});
-        %         plot(data_filt.time{1}, data_filt.trial{1});
-        %         plot(data_filt_but.time{1}, data_filt_but.trial{1});
-        %         xlim([(CEDStruct.markers.WoD.synctime-20) (CEDStruct.markers.WoD.synctime+40)]);
-        %
-        %         fname=fullfile(config{iprot}.imagesavedir,'DC','test_filter',sprintf('%s_%s',config{iprot}.directorylist{1}{1},channame));
-        %         dtx_savefigure(fig,fname,'pdf','png','close');
         
     end %channame
 end %iprot

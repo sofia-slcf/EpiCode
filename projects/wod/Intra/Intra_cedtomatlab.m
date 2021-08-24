@@ -31,7 +31,7 @@ config = Intra_setparams;
 
 chanlist= ["Vm","EEG-S1-L"];%,"Im"]; %chanlist Intra
 
-for iprot= 13:16%size(config,2)
+for iprot= 1:size(config,2)
     datapath = char(fullfile(config{iprot}.rawdir,config{iprot}.directorylist{1}));
     matlabpath= fullfile(fileparts(datapath),'matlab_structures');
     [folder, file, extension] = fileparts(datapath);

@@ -83,7 +83,8 @@ end %irat
 
 %% Analysis for all rats
 
-stats_all= ouaba_wavedetection(config,true);
+stats_all= ouaba_wavedetection(config,false);
+
 
 
 

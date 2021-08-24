@@ -1,4 +1,4 @@
-function stats = ouaba_wavedetection(cfg, force)
+function stats_all = ouaba_wavedetection(cfg, force)
 
 fname_out = fullfile(cfg{4}.datasavedir,'Detection', sprintf('ouaba_wavedetection_allrats.mat'));
 if exist(fname_out, 'file') && force == false
@@ -6,7 +6,7 @@ if exist(fname_out, 'file') && force == false
     return
 end
 
-for irat= 1:size(cfg,2)
+for irat= 3:size(cfg,2)
     
     if isempty(cfg{irat})
         continue
@@ -85,7 +85,8 @@ for irat= 1:size(cfg,2)
             
             
             %store peak timings per channel in structure
-            stats_all{irat}.WoD.peak_time(ichan,itrial)= t_peak_wod
+            stats_all{irat}.WoD.peak_time(ichan,itrial)= t_peak_wod;
+            stats_all{irat}.WoD.peak_value(ichan,itrial)= -v_peak_wod;
             
             %plot detection for visual control
             fig_wodpeak= figure;
@@ -106,15 +107,13 @@ for irat= 1:size(cfg,2)
                 mkdir(detectpeak_wod);
             end
             
-            if ~isfolder(detectpeak_wor)
-                mkdir(detectpeak_wor);
-            end
+            
             
             fname_wodpeak=fullfile(detectpeak_wod,sprintf('%s_WoD%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
             
             dtx_savefigure(fig_wodpeak,fname_wodpeak,'png','pdf','close');
             
-            clear fname_wodpeak fname_worpeak detectpeak_wod detectpeak_wor
+            clear fname_wodpeak  detectpeak_wod 
             %% Determine minimum and maximum slopes and extract timings and values
             
             %WOD window selection

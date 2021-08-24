@@ -6,7 +6,7 @@
 
 #SBATCH --time=99:99:99
 
-#SBATCH --mem=120G
+#SBATCH --mem=20G
 
 #SBATCH --cpus-per-task=1
 
@@ -16,7 +16,7 @@
 
 #SBATCH --error=/network/lustre/iss01/charpier/analyses/wod/Antoine/slurm-output/error-%j_%a-%x.txt
 
-#SBATCH --array=6
+#SBATCH --array=0
 
 module load MATLAB/R2019b
 

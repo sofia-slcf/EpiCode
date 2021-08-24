@@ -1,12 +1,12 @@
 #!/bin/bash
 
-#SBATCH --job-name=intra_overdraw
+#SBATCH --job-name=intra_projet
 
-#SBATCH --partition=normal
+#SBATCH --partition=normal,bigmem
 
 #SBATCH --time=99:99:99
 
-#SBATCH --mem=2G
+#SBATCH --mem=12G
 
 #SBATCH --cpus-per-task=2
 
@@ -20,7 +20,7 @@
 
 module load MATLAB/R2019b
 
-matlab -nodesktop -softwareopengl -nosplash -nodisplay -r "Intra_overdraw('Intra_setparams');"
+matlab -nodesktop -softwareopengl -nosplash -nodisplay -r "Intra_projet_antoine($SLURM_ARRAY_TASK_ID);"
 
 sleep 5;
 

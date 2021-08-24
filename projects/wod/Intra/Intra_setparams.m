@@ -1,4 +1,4 @@
-function [config] = DC_setparams
+function [config] = Intra_setparams
 
 disp('setting parameters');
 
@@ -34,6 +34,13 @@ configcommon.Intra.write                          = true; %save computed data to
 configcommon.Intra.lpfilter                        = 3;%Hz
 configcommon.Intra.wod_toisearch                   = [-20 20];%Hz
 
+configcommon.timefreq.foi          = [1:1:100];%[1:2:100] is right value
+configcommon.timefreq.t_ftimwin = 5; % in seconds
+configcommon.timefreq.timestep     = 0.5;% in second, time between 2 sliding time windows. can be 'all'
+configcommon.timefreq.tapsmofrq    = 4; %2
+
+
+
 
 %% protocol 1
 config{1}                     = configcommon;
@@ -47,6 +54,7 @@ config{1}.directorylist{1}    = {'03_06_2019_n1'}; %liste de tous les fichiers, 
 config{1}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{1}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{1}.Intra.dep          = 1561;
+config{1}.Intra.coord           = {-1,5.2}; %AP,DV
 
 %% protocol 2
 config{2}                     = configcommon;
@@ -60,6 +68,7 @@ config{2}.directorylist{1}    = {'03_06_2019_n2'}; %liste de tous les fichiers, 
 config{2}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{2}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{2}.Intra.dep          = 2150;
+config{2}.Intra.coord           = {-0.8,4.9}; %AP,DV
 
 %% protocol 3
 config{3}                     = configcommon;
@@ -73,6 +82,7 @@ config{3}.directorylist{1}    = {'13_06_2019_n1'}; %liste de tous les fichiers, 
 config{3}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{3}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{3}.Intra.dep          = 1815;
+config{3}.Intra.coord           = {-1.3,5.4}; %AP,DV
 
 %% protocol 4
 config{4}                     = configcommon;
@@ -86,6 +96,7 @@ config{4}.directorylist{1}    = {'13_06_2019_n2'}; %liste de tous les fichiers, 
 config{4}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{4}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{4}.Intra.dep          = 2540;
+config{4}.Intra.coord           = {-1,5}; %AP,DV
 
 %% protocol 5
 config{5}                     = configcommon;
@@ -99,6 +110,8 @@ config{5}.directorylist{1}    = {'13_06_2019_n3'}; %liste de tous les fichiers, 
 config{5}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{5}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{5}.Intra.dep          = 1863;
+config{5}.Intra.coord           = {-1.3,5.4}; %AP,DV
+
 
 %% protocol 6
 config{6}                     = configcommon;
@@ -112,6 +125,7 @@ config{6}.directorylist{1}    = {'24_05_2019_n1'}; %liste de tous les fichiers, 
 config{6}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{6}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{6}.Intra.dep          = 1204;
+config{6}.Intra.coord           = {-1.2,4.5}; %AP,DV
 
 %% protocol 7
 config{7}                     = configcommon;
@@ -125,6 +139,8 @@ config{7}.directorylist{1}    = {'24_05_2019_n2'}; %liste de tous les fichiers, 
 config{7}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{7}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{7}.Intra.dep          = 1228;
+config{7}.Intra.coord           = {-1.3,4.3}; %AP,DV
+
 
 %% protocol 8
 config{8}                     = configcommon;
@@ -138,6 +154,8 @@ config{8}.directorylist{1}    = {'24_05_2019_n3'}; %liste de tous les fichiers, 
 config{8}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{8}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{8}.Intra.dep          = 1348;
+config{8}.Intra.coord           = {-1.3,4.6}; %AP,DV
+
 
 %% protocol 9
 config{9}                     = configcommon;
@@ -151,6 +169,8 @@ config{9}.directorylist{1}    = {'24_05_2019_n4'}; %liste de tous les fichiers, 
 config{9}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{9}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{9}.Intra.dep          = 2154;
+config{9}.Intra.coord           = {-1.3,4.5}; %AP,DV
+
 
 %% protocol 10
 config{10}                     = configcommon;
@@ -164,6 +184,8 @@ config{10}.directorylist{1}    = {'16_02_2021_n1'}; %liste de tous les fichiers,
 config{10}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{10}.Intra.rename          = {'Intra_sup', 'current','ECoG'};
 config{10}.Intra.dep          = 924;
+config{10}.Intra.coord           = {-0.9,5.2}; %AP,DV
+
 
 %% protocol 11
 config{11}                     = configcommon;
@@ -177,6 +199,8 @@ config{11}.directorylist{1}    = {'19_02_2021_n1'}; %liste de tous les fichiers,
 config{11}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{11}.Intra.rename          = {'Intra_sup', 'current','ECoG'};
 config{11}.Intra.dep          = 558;
+config{11}.Intra.coord           = {-1.4,4.7}; %AP,DV
+
 
 %% protocol 12
 config{12}                     = configcommon;
@@ -190,6 +214,8 @@ config{12}.directorylist{1}    = {'16_03_2021_n1'}; %liste de tous les fichiers,
 config{12}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{12}.Intra.rename          = {'Intra_sup', 'current','ECoG'};
 config{12}.Intra.dep          = 463;
+config{12}.Intra.coord           = {-1.3,5}; %AP,DV
+
 
 %% protocol 13
 config{13}                     = configcommon;
@@ -203,6 +229,8 @@ config{13}.directorylist{1}    = {'29_09_2020_n2'}; %liste de tous les fichiers,
 config{13}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{13}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{13}.Intra.dep          = 2046;
+config{13}.Intra.coord           = {-0.5,3.4}; %AP,DV
+
 
 %% protocol 14
 config{14}                     = configcommon;
@@ -216,6 +244,8 @@ config{14}.directorylist{1}    = {'10_07_2020_n1'}; %liste de tous les fichiers,
 config{14}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{14}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{14}.Intra.dep          = 1465;
+config{14}.Intra.coord           = {-0.6,3.9}; %AP,DV
+
 
 %% protocol 15
 config{15}                     = configcommon;
@@ -229,6 +259,8 @@ config{15}.directorylist{1}    = {'13_11_2020_n1'}; %liste de tous les fichiers,
 config{15}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{15}.Intra.rename          = {'Intra_sup', 'current','ECoG'};
 config{15}.Intra.dep          = 784;
+config{15}.Intra.coord           = {-0.8,3.5}; %AP,DV
+
 
 %% protocol 16
 config{16}                     = configcommon;
@@ -242,3 +274,4 @@ config{16}.directorylist{1}    = {'13_11_2020_n2'}; %liste de tous les fichiers,
 config{16}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{16}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{16}.Intra.dep          = 1954;
+config{16}.Intra.coord           = {-0.8,3.5}; %AP,DV

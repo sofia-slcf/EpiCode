@@ -2,7 +2,7 @@ function freq_data= wod_tfr_extractdata(cfg,force)
 
 fname_out = fullfile(cfg{4}.datasavedir,'freq_data', sprintf('freq_data_allrat.mat'));
 if exist(fname_out, 'file') && force == false
-    load(fname_out, 'stats_all');
+    load(fname_out, 'freq_data');
     return
 end
 
@@ -34,9 +34,11 @@ for idata= 1: size(analysis_names,2)
             wod_rat(count_trials) = count_trials; %store rat id for each wod (some rats have several wod)
             chan_list                                   = fieldnames(data_temp.(analysis_names{idata}){itrial});
             
+            data_temp.(analysis_names{idata}){itrial}.Puff=[];
+            
             data_rat= data_temp.(analysis_names{idata}){itrial};
             
-            for iband= ["HF" "MF" "MLF" "LF"]
+            for iband= ["HF" "LF"]
                 for ichan= 1: numel(chan_list)
                     chan_name = chan_list{ichan};
                     %replace empty channels by nans
@@ -109,9 +111,7 @@ for idata= 1: size(analysis_names,2)
                     %                     freq_data{irat}.(analysis_names{idata}).peak_ratio_time(ichan,itrial)=t_peak.ratio.(chan_name);
                     %                     freq_data{irat}.(analysis_names{idata}).peak_ratio_value(ichan,itrial)=v_peak.ratio.(chan_name);
                     %                     end
-                    
-                    
-                    
+
                 end %ichan
                 
                 %un plot avec toutes les électrodes de la bande + toutes
@@ -145,6 +145,9 @@ for idata= 1: size(analysis_names,2)
                 end
             end %ichan
         end %itrial
+        idx_zeros=find(freq_data{irat}.Depth(:,:)==0);
+        freq_data{irat}.Depth(idx_zeros)=nan;
+        
     end %irat
 end %idata
 

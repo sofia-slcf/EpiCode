@@ -39,7 +39,7 @@ end
     
 
 % get images axes handles
-hs = findobj(hfig,'Type','image','-and','Tag','cip');
+hs = findobj(hfig,'Type','image','-and','Tag','cip'); %original
 ht = findobj(hfig,'Type','surface');
 ha = findobj(hfig,'Type','axes');
 

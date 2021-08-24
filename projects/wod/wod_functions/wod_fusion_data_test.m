@@ -17,6 +17,8 @@ depth_end = 2210; %µm
 depth_step = 100;
 
 icol = 0;
+groups={'deep_ori', 'superf_ori', 'outlier'};
+
 for idepth = depth_start:depth_step:depth_end %step de 250 car les électrodes sont espacées de 250µm
     icol = icol+1;
     irow = 0;
@@ -24,34 +26,34 @@ for idepth = depth_start:depth_step:depth_end %step de 250 car les électrodes so
         if isempty(cfg{irat})
             continue
         end
-        
-        
-        
         for itrial = 1:size(data{irat}.WoD.peak_time, 2)
             irow = irow+1;
             sel = abs(data{irat}.Depth(:, itrial) - idepth) < depth_step/2;
             for iwave=["WoD" "WoR"]
-                for ifield = fieldnames(data{irat}.(iwave))'
-%                     if data{irat}.
-%                         ordered_data.ratname = [ordered_data.ratname; string(data{irat}.ratname)];
-%                         continue
-%                     end
+                    if data{irat}.oridepthclass==1400
+                        igroup=groups{1};
+                    elseif data{irat}.oridepthclass==1000
+                        igroup=groups{2};
+                    else
+                        igroup=groups{3};
+                    end
                     if sum(sel) == 1
-                        ordered_data.(iwave).(ifield)(irow, icol) = data{irat}.(iwave).(ifield)(sel, itrial);
+                        ordered_data.(iwave).(igroup)(irow, icol) = data{irat}.(iwave).peak_time(sel, itrial);
                         ordered_data.Depth(irow,icol)= data{irat}.Depth(sel,itrial);
                     elseif sum(sel) == 0
-                        ordered_data.(iwave).(ifield)(irow, icol) = nan;
+                        ordered_data.(iwave).(igroup)(irow, icol) = nan;
                         ordered_data.Depth(irow,icol)= nan;
 
                     elseif sum(sel) > 1
                         error('it should have only one electrode for one deepness');
                     end
-                    
-                end
             end
         end
     end
 end
+
+
+
 
 save(fname_out,'ordered_data')
 

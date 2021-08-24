@@ -192,42 +192,42 @@ config{12}.DC.rename          = {'DC_sup', 'DC_dep'};
 config{12}.DC.sup_dep          = 330;
 config{12}.DC.dep_dep          = 1000;
 
-%% protocol 13
-config{13}                     = configcommon;
-config{13}.datasavedir         = datasavedir;       %path where to save MuseStruct data
-config{13}.imagesavedir        = imagesavedir;
-config{13}.prefix              = '04_03_2020_p2';                                                        %patient name. Must end by "-". namepatient-
-config{13}.rawdir              = fullfile(rootpath_data,'04_03_2020_WOD');                       %path to patient data
-
-config{13}.directorylist{1}    = {'04_03_2020_WOD_p2_1304'}; %liste de tous les fichiers, tous les protocoles
-config{13}.DC.channel         = {'Vm'};
-config{13}.DC.rename          = { 'DC_dep'};
-config{13}.DC.sup_dep          = NaN;
-config{13}.DC.dep_dep          = 1304;
-
-%% protocol 14
-config{14}                     = configcommon;
-config{14}.datasavedir         = datasavedir;       %path where to save MuseStruct data
-config{14}.imagesavedir        = imagesavedir;
-config{14}.prefix              = '12_03_2020_p2';                                                        %patient name. Must end by "-". namepatient-
-config{14}.rawdir              = fullfile(rootpath_data,'12_03_2020_WOD');                       %path to patient data
-
-config{14}.directorylist{1}    = {'12_03_2020_WOD_p2_1200'}; %liste de tous les fichiers, tous les protocoles
-config{14}.DC.channel         = {'Vm'};
-config{14}.DC.rename          = { 'DC_dep'};
-config{14}.DC.sup_dep          = NaN;
-config{14}.DC.dep_dep          = 1200;
-
-%% protocol 15
-config{15}                     = configcommon;
-config{15}.datasavedir         = datasavedir;       %path where to save MuseStruct data
-config{15}.imagesavedir        = imagesavedir;
-config{15}.prefix              = '10_09_2020_p1';                                                        %patient name. Must end by "-". namepatient-
-config{15}.rawdir              = fullfile(rootpath_data,'10_09_2020_WOD');                       %path to patient data
-
-config{15}.directorylist{1}    = {'10_09_2020_WOD_p1_1688'}; %liste de tous les fichiers, tous les protocoles
-config{15}.DC.channel         = {'Vm'};
-config{15}.DC.rename          = { 'DC_dep'};
-config{15}.DC.sup_dep          = NaN;
-config{15}.DC.dep_dep          = 1688;
+% %% protocol 13
+% config{13}                     = configcommon;
+% config{13}.datasavedir         = datasavedir;       %path where to save MuseStruct data
+% config{13}.imagesavedir        = imagesavedir;
+% config{13}.prefix              = '04_03_2020_p2';                                                        %patient name. Must end by "-". namepatient-
+% config{13}.rawdir              = fullfile(rootpath_data,'04_03_2020_WOD');                       %path to patient data
+% 
+% config{13}.directorylist{1}    = {'04_03_2020_WOD_p2_1304'}; %liste de tous les fichiers, tous les protocoles
+% config{13}.DC.channel         = {'Vm'};
+% config{13}.DC.rename          = { 'DC_dep'};
+% config{13}.DC.sup_dep          = NaN;
+% config{13}.DC.dep_dep          = 1304;
+% 
+% %% protocol 14
+% config{14}                     = configcommon;
+% config{14}.datasavedir         = datasavedir;       %path where to save MuseStruct data
+% config{14}.imagesavedir        = imagesavedir;
+% config{14}.prefix              = '12_03_2020_p2';                                                        %patient name. Must end by "-". namepatient-
+% config{14}.rawdir              = fullfile(rootpath_data,'12_03_2020_WOD');                       %path to patient data
+% 
+% config{14}.directorylist{1}    = {'12_03_2020_WOD_p2_1200'}; %liste de tous les fichiers, tous les protocoles
+% config{14}.DC.channel         = {'Vm'};
+% config{14}.DC.rename          = { 'DC_dep'};
+% config{14}.DC.sup_dep          = NaN;
+% config{14}.DC.dep_dep          = 1200;
+% 
+% %% protocol 15
+% config{15}                     = configcommon;
+% config{15}.datasavedir         = datasavedir;       %path where to save MuseStruct data
+% config{15}.imagesavedir        = imagesavedir;
+% config{15}.prefix              = '10_09_2020_p1';                                                        %patient name. Must end by "-". namepatient-
+% config{15}.rawdir              = fullfile(rootpath_data,'10_09_2020_WOD');                       %path to patient data
+% 
+% config{15}.directorylist{1}    = {'10_09_2020_WOD_p1_1688'}; %liste de tous les fichiers, tous les protocoles
+% config{15}.DC.channel         = {'Vm'};
+% config{15}.DC.rename          = { 'DC_dep'};
+% config{15}.DC.sup_dep          = NaN;
+% config{15}.DC.dep_dep          = 1688;
 
