@@ -275,3 +275,18 @@ config{16}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
 config{16}.Intra.rename          = {'Intra_dep', 'current','ECoG'};
 config{16}.Intra.dep          = 1954;
 config{16}.Intra.coord           = {-0.8,3.5}; %AP,DV
+
+%% protocol 17
+config{17}                     = configcommon;
+
+config{17}.datasavedir         = datasavedir;       %path where to save MuseStruct data
+config{17}.imagesavedir        = imagesavedir;
+config{17}.prefix              = '01_09_2021_n1';                                                        %patient name. Must end by "-". namepatient-
+config{17}.rawdir              = fullfile(rootpath_data,'01_09_2021_WOD');                       %path to patient data
+
+config{17}.directorylist{1}    = {'01_09_2021_n1'}; %liste de tous les fichiers, tous les protocoles
+config{17}.Intra.channel         = {'Vm', 'Im','EEG-S1-L'};
+config{17}.Intra.rename          = {'Intra_sup', 'current','ECoG'};
+config{17}.Intra.dep          = 323;
+config{17}.Intra.coord           = {-1,3.2}; %AP,DV
+

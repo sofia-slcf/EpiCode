@@ -52,7 +52,7 @@ ft_default.tracktimeinfo = 'no';
 
 config16 = wod_setparams;
 config32 = wod_setparams_32chan;
-config = config16;
+config = config32;
 cfgorig = config;
 
 ipart= 1;
@@ -84,17 +84,17 @@ if slurm_task_id >0
         [~,dir_name]                       = fileparts(cfgorig{irat}.rawdir);
         config{irat}.rawdir                = fullfile(config{irat}.concatdata_path);
         %when config 32
-        %config{irat}.directorylist{ipart}  = {config{irat}.prefix};
+        config{irat}.directorylist{ipart}  = {config{irat}.prefix};
         
         %when config16
-        config{irat}.directorylist{ipart}(1,:)=[];
-        config{irat}.directorylist{ipart}{ipart}=dir_name;
+        %         config{irat}.directorylist{ipart}(1,:)=[];
+        %         config{irat}.directorylist{ipart}{ipart}=dir_name;
         %read Muse markers
-        MuseStruct = readMuseMarkers(config{irat}, true);
+        MuseStruct = readMuseMarkers(config{irat}, false);
         %save(fullfile(config{irat}.datasavedir,sprintf('%s-MuseStruct.mat',config{irat}.prefix)),'MuseStruct');
         
         %read LFP, append electrodes, and cut into trials according to Muse Markers
-        LFP = readLFP(config{irat}, MuseStruct, true);
+        LFP = readLFP(config{irat}, MuseStruct, false);
         LFP = LFP{1}.(config{irat}.LFP.name{1}); %remove this 'epicode' organisation for now.
         %end
         
@@ -114,10 +114,10 @@ if slurm_task_id >0
         
         
         % Compute TFR for each rat
-        %wod_tfr_compute(config{irat}, MuseStruct,LFP);
+        wod_tfr_compute(config{irat}, MuseStruct,LFP);
         
         %Plot TFR data for each rat
-        %wod_tfr_plotrat(config{irat});
+        wod_tfr_plotrat(config{irat});
         
         
         
@@ -221,9 +221,50 @@ if slurm_task_id==0
     ordered_data_1400.Depth=ordered_data_1400.Depth(~toremove_2, :);
     ordered_data_1000.plateau_duration=ordered_data_1000.plateau_duration(~toremove_1,:);
     ordered_data_1400.plateau_duration=ordered_data_1400.plateau_duration(~toremove_2,:);
-    
+    ordered_data_1000.depthclass="superficial";
+    ordered_data_1400.depthclass="deep";
     %plot delays pooled 1000µm origin
-    wod_plot_delays(ordered_data_1000,config);
+    %wod_plot_delays(ordered_data_1000,config);
+    %wod_plot_delays(ordered_data_1400,config);
+    
+    %% Make Spearman correlation between distance to origin and time
+    
+    %Initialize matrix
+    allTime=nan(23,32);
+    allDistance=allTime;
+    
+    %fill amtrix with time and distance values
+    icol=0;
+    for irat= 1: size(stats_all,2)
+        if isempty(config{irat})
+            continue
+        end
+        
+        for itrial=1:size(stats_all{irat}.WoD.peak_time,2)
+            icol=icol+1;
+            for ichan=1:size(stats_all{irat}.WoD.peak_time,1)
+            allTime(ichan,icol)=stats_all{irat}.WoD.peak_time(ichan,itrial)-min(stats_all{irat}.WoD.peak_time(:,itrial));
+            idxOri= stats_all{irat}.WoD.peak_time(:,itrial)==min(stats_all{irat}.WoD.peak_time(:,itrial));
+            allDistance(ichan,icol)=abs(stats_all{irat}.Depth(ichan,itrial)-stats_all{irat}.Depth(idxOri));
+            end %ichan
+            end %itrial
+    end %irat
+    
+    figure;hold
+    
+    C=jet(size(time,2));
+    icol=0;
+    for irat=1:size(time,2)
+        icol=icol+1;
+        plot(allTime(:,icol),allDistance(:,icol),'Color',C(icol,:));
+    end
+    
+    for i=1:size(allTime,2)
+    [rho(i),pval(i)]=corr(allTime(:,i),allDistance(:,i),'type','spearman','rows','complete');
+    end
+    [~, ~, ~, adj_p]=fdr_bh(pval);
+
+    
     %% Plot plateau duration according to depth
     
     %For superficial origins
@@ -275,8 +316,6 @@ if slurm_task_id==0
         data_sem_1400=data_std_1400 / (sqrt(length(ordered_data_interp1400.plateau_duration)));
         data_mean_depth_1400(1,ichan)=nanmean(ordered_data_interp1400.Depth(:,ichan));
     end %ichan
-    clear data_mean_1000 data_mean_1400 data_mean_depth_1000 data_mean_depth_1400 data_med_1000 data_med_1400 data_med_depth_1000 data_med_depth_1400
-    clear data_sem_1000 data_sem_1400 data_std_1000 data_std_1400
     %% Plot mean +/- SEM filled
     
     fig_meanraw=figure;hold
@@ -309,7 +348,7 @@ if slurm_task_id==0
     freq_data=wod_tfr_extractdata([config16 config32],false);
     
     %gather 16 and 32 chans
-    ordered_freqdata = wod_fusion_freqdata(freq_data,[config16 config32],stats_all,false);
+    ordered_freqdata = wod_fusion_freqdata(freq_data,[config16 config32],stats_all,true);
     
     %plot freq data
     wod_plot_freqdata(ordered_freqdata,[config16 config32]);
@@ -615,14 +654,14 @@ if slurm_task_id==0
             a=0;
             for ichan=1:size(chan_list,1)
                 
-                plot(LFP_lpfilt{irat}.time{itrial},LFP_lpfilt{irat}.trial{itrial}(ichan,:)-(a*d),'Color','k','LineWidth',2);
+                plot(LFP_lpfilt{irat}.time{itrial},LFP_lpfilt{irat}.trial{itrial}(ichan,:)-(a*d),'Color','k','LineWidth',1);
                 hold on
                 ylabel(sprintf('%i',config{irat}.LFP.chan_depth{ichan}));
                 
                 a= a+1;
                 
             end %ichan
-            xlim([v_off+60 v_on+10]);
+            xlim([v_off-60 v_on+200]);
             xline(v_off);
             xline(v_on);
             

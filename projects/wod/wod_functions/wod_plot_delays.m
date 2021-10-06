@@ -1,7 +1,6 @@
-function wod_plot_delay(ordered_data,cfg)
+function wod_plot_delays(ordered_data,cfg)
 
 
-%% load data
 
 for iwave= ["WoD" "WoR"]
     for itime= ["peak_time" "min_slope_time" "start_time"]
@@ -68,7 +67,7 @@ for iwave= ["WoD" "WoR"]
         ylim([0 2200]);
         xlim([0 300]);
         
-        fname_raw=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_raw_superfori',iwave,itime));
+        fname_raw=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_raw_%s',iwave,itime,ordered_data.depthclass));
         
         if ~isfolder(fullfile(cfg{4}.imagesavedir,'delays'))
             mkdir(fullfile(cfg{4}.imagesavedir,'delays'));
@@ -108,7 +107,7 @@ for iwave= ["WoD" "WoR"]
         xlim([0 300]);
         
         
-        fname_medraw=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_median_raw_superfori',iwave,itime));
+        fname_medraw=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_median_raw_%s',iwave,itime,ordered_data.depthclass));
         
         if ~isfolder(fullfile(cfg{4}.imagesavedir,'delays'))
             mkdir(fullfile(cfg{4}.imagesavedir,'delays'));
@@ -148,7 +147,7 @@ for iwave= ["WoD" "WoR"]
         xlim([0 300]);
         
         
-        fname_meanraw=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_mean_raw_superfori',iwave,itime));
+        fname_meanraw=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_mean_raw_%s',iwave,itime,ordered_data.depthclass));
         
         if ~isfolder(fullfile(cfg{4}.imagesavedir,'delays'))
             mkdir(fullfile(cfg{4}.imagesavedir,'delays'));
@@ -207,7 +206,7 @@ for iwave= ["WoD" "WoR"]
         ylim([0 2200]);
         xlim([-10 100]);
         
-        fname_norm=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_norm_superfori',iwave,itime));
+        fname_norm=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_norm_%s',iwave,itime,ordered_data.depthclass));
         
         if ~isfolder(fullfile(cfg{4}.imagesavedir,'delays'))
             mkdir(fullfile(cfg{4}.imagesavedir,'delays'));
@@ -247,7 +246,7 @@ for iwave= ["WoD" "WoR"]
         xlim([-20 100]);
         
         
-        fname_mednorm=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_median_norm_superfori',iwave,itime));
+        fname_mednorm=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_median_norm_%s',iwave,itime,ordered_data.depthclass));
         
         if ~isfolder(fullfile(cfg{4}.imagesavedir,'delays'))
             mkdir(fullfile(cfg{4}.imagesavedir,'delays'));
@@ -281,7 +280,7 @@ for iwave= ["WoD" "WoR"]
         xlim([-10 40]);
         
         
-        fname_meannorm=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_mean_norm_superfori',iwave,itime));
+        fname_meannorm=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_mean_norm_%s',iwave,itime,ordered_data.depthclass));
         
         if ~isfolder(fullfile(cfg{4}.imagesavedir,'delays'))
             mkdir(fullfile(cfg{4}.imagesavedir,'delays'));
@@ -344,7 +343,7 @@ end %iwave
         xlim([-10 30]);
         
         
-        fname_2wave= fullfile(cfg{4}.imagesavedir,'delays',sprintf('two_waves_mean_norm_superfori'));
+        fname_2wave= fullfile(cfg{4}.imagesavedir,'delays',sprintf('two_waves_mean_norm_%s',ordered_data.depthclass));
         dtx_savefigure(fig_wodwor,fname_2wave,'png','pdf','close');
 
 %% Plot Amplitude and half-width values
@@ -414,7 +413,7 @@ for iwave=["WoD" "WoR"]
         ylim([0 2200]);
         
         
-        fname_meannorm=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_mean_norm_deepfori',iwave,itime));
+        fname_meannorm=fullfile(cfg{4}.imagesavedir,'delays',sprintf('%s_%s_%s',iwave,itime,ordered_data.depthclass));
         
         if ~isfolder(fullfile(cfg{4}.imagesavedir,'delays'))
             mkdir(fullfile(cfg{4}.imagesavedir,'delays'));

@@ -99,7 +99,7 @@ for idata=1:size(analysis_names,2)
             
             plot(data_mean,data_mean_depth,'Color',Color_band(color_idx,:),'LineWidth',1.5);
             patch([data_mean- data_sem, data_mean(end:-1:1)+ data_sem(end:-1:1)], [data_mean_depth, data_mean_depth(end:-1:1)], Color_band(color_idx,:), 'facealpha', 0.3, 'edgecolor', 'none');
-            
+            hold on
             
             if iana=="peak_time"
             plot(data_meanISO,data_mean_depth,'Color','k','LineWidth',1.5);

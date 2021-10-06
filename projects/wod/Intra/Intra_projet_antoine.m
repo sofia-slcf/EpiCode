@@ -331,7 +331,7 @@ if slurm_task_id==0
             tomean_L5.time(i,:)=[];
         end
     end
-    
+
     %Calculate mean traces
     mean_L23=mean(tomean_L23.Vm,1);
     mean_L5=mean(tomean_L5.Vm,1);
@@ -339,11 +339,12 @@ if slurm_task_id==0
     std_L5=std(tomean_L5.Vm,0,1);
     sem_L23=std_L23/sqrt(size(tomean_L23.Vm,1));
     sem_L5=std_L5/sqrt(size(tomean_L5.Vm,1));
+    diff_trace= mean_L23 - mean_L5;
     %% Make non parametric comparisons of average traces
     
     statssavedir='\\lexport\iss01.charpier\analyses\wod\Antoine\stats\Intra';
     
- 
+    
     %make wilcoxon test for each sample
     for icol=1:size(tomean_L23.Vm,2)
         p(icol)=ranksum(tomean_L23.Vm(:,icol),tomean_L5.Vm(:,icol));
@@ -361,8 +362,8 @@ if slurm_task_id==0
     writetable(pValuestable,fname_table,'FileType','Spreadsheet');
     
     %prepare line to plot on average traces
-    idx_signif= p<0.05;
-    idx_nnsignif= p>0.05;
+    idx_signif= adj_p<0.05;
+    idx_nnsignif= adj_p>0.05;
     
     pVal_plot=ones(1,size(p,2));
     pVal_plot=pVal_plot.*idx_signif;
@@ -401,8 +402,9 @@ if slurm_task_id==0
     plot(tomean_L23.time(1,:),mean_L23,'Color',[0.8500 0.3250 0.0980],'LineWidth',1);
     patch( [tomean_L23.time(1,:),tomean_L23.time(1,end:-1:1)],[mean_L23- sem_L23, mean_L23(end:-1:1)+ sem_L23(end:-1:1)], [0.8500 0.3250 0.0980], 'facealpha', 0.3, 'edgecolor', 'none');
     plot(tomean_L5.time(1,:),pVal_plot,'Color','r','LineWidth',2);
+    plot(tomean_L5.time(1,:),diff_trace);
     
-    ylim([-10 60]);
+    ylim([-30 60]);
     
     fname_23=fullfile(averagetracepath,'Intra_superficial_mean_sem');
     dtx_savefigure(fig_L23,fname_23,'png','pdf','close');
@@ -411,8 +413,9 @@ if slurm_task_id==0
     plot(tomean_L5.time(1,:),mean_L5,'Color','k','LineWidth',1);
     patch( [tomean_L5.time(1,:),tomean_L5.time(1,end:-1:1)],[mean_L5- sem_L5, mean_L5(end:-1:1)+ sem_L5(end:-1:1)], 'k', 'facealpha', 0.3, 'edgecolor', 'none');
     plot(tomean_L5.time(1,:),pVal_plot,'Color','r','LineWidth',2);
-    
-    ylim([-10 60]);
+    plot(tomean_L5.time(1,:),diff_trace);
+
+    ylim([-30 60]);
     
     fname_5=fullfile(averagetracepath,'Intra_deep_mean_sem');
     dtx_savefigure(fig_L5,fname_5,'png','pdf','close');
@@ -450,7 +453,6 @@ if slurm_task_id==0
     if ~isfolder(statssavedir)
         mkdir(statssavedir);
     end
-    
     %% Non-parametric comparisons of means
     
     statstable=table.empty;
@@ -618,7 +620,7 @@ if slurm_task_id==0
         cfgtemp.masknans    = 'yes';
         ft_singleplotTFR(cfgtemp, timefreq_wod_blcorrected);
         ft_pimpplot(fig, jet(5000))
-        caxis([1 2])
+        caxis([0 2])
         axis tight
         
         xlim([-20 t_stop-t_voff])

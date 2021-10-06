@@ -53,7 +53,7 @@ for irat=1:size(cfg,2)
             
             end %itrial
             
-            scatterpath=fullfile(cfg{irat}.imagesavedir,'delays','scatter',sprintf('%s',cfg{irat}.prefix));
+            scatterpath=fullfile(cfg{4}.imagesavedir,'delays','scatter',sprintf('%s',cfg{irat}.prefix));
             
             
             

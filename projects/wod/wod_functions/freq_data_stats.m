@@ -11,7 +11,7 @@ depth_step = 100;
 statstable = table.empty;
 
 analysis_names={'timefreq_wod','timefreq_wod_timenorm','timefreq_wod_blcorrected','timefreq_wod_timenorm_blcorrected'};
-freq_names=["HF","MF","MLF","LF"];
+freq_names=["HF","LF"];
 
 
 for inorm=1:size(analysis_names,2)
@@ -26,18 +26,12 @@ for inorm=1:size(analysis_names,2)
             continue
         end
         
-        for freqband = ["HF" "MF" "MLF" "LF" "ISO"]
+        for freqband = ["HF" "LF"]
             
             if freqband=="HF"
                 freq_idx=1;
-            elseif freqband=="MF"
-                freq_idx=2;
-            elseif freqband=="MLF"
-                freq_idx=3;
             elseif freqband=="LF"
-                freq_idx=4;
-            elseif freqband=="ISO"
-                freq_idx=5;
+                freq_idx=2;
             end
             
             
@@ -136,7 +130,7 @@ for inorm=1:size(analysis_names,2)
     %Make table with corrected p-values
     adj_pval_depthtable=table.empty;
     adj_pval_depthtable.depth=pval_depthtable.depth;
-    for ifreq=1:4
+    for ifreq=1:2
         adj_pval_depthtable.(freq_names{ifreq})=adj_pval_peakval.(analysis_names{inorm})(:,ifreq);
     end %ifreq
     
@@ -183,8 +177,8 @@ for inorm=1:size(analysis_names,2)
     
     adj_pvalpeaktime_table=table.empty;
     
-    for ifreq=1:3
-        adj_pvalpeaktime_table.(freq_names{ifreq})=adj_pval_peaktime.(analysis_names{inorm})(:,ifreq);
+    for ifreq=1:2
+        adj_pvalpeaktime_table.(freq_names{ifreq})=adj_pval_peaktime.(analysis_names{inorm});
     end
     
     fname_pvaltime= fullfile(anovasavedir,'multiple_comp',sprintf('peak_timings_freq_%s',analysis_names{inorm}));
@@ -231,7 +225,7 @@ for inorm=1:size(analysis_names,2)
     freqTimes=gcf;
     fname_freqtimes=fullfile(boxplotpath,sprintf('peaktime_frequency_%s',analysis_names{inorm}));
     dtx_savefigure(freqTimes,fname_freqtimes,'pdf','png','close');
-   
+    
     %plot peak timings per frequency band and trial
     
     %preparing data
@@ -241,7 +235,7 @@ for inorm=1:size(analysis_names,2)
     sel_strial=statstable.trial==2;
     peaktime_strial=statstable(sel_strial,:);
     
-    for ifreq=1:4
+    for ifreq=1:2
         sel=peaktime_ftrial.freq==ifreq;
         sel_2=peaktime_strial.freq==ifreq;
         %first trial
@@ -252,14 +246,14 @@ for inorm=1:size(analysis_names,2)
     end
     
     % put data into cell arrays
-    data=cell(4,2);
+    data=cell(2,2);
     for ii=1:size(data,1)
         ftrialpeaktime_perfreq_c{ii}=ftrialpeaktime_perfreq(:,ii);
         strialpeaktime_perfreq_c{ii}=strialpeaktime_perfreq(:,ii);
     end
     data=vertcat(ftrialpeaktime_perfreq_c,strialpeaktime_perfreq_c);
     
-    xlab={'HF','MF','MLF','LF'};
+    xlab={'HF','LF'};
     %determine colors
     col=[255,64,64, 200;
         255,127,36, 200];

@@ -45,8 +45,6 @@ end
 if ~isfolder(statssavedir)
     mkdir(statssavedir);
 end
-
-
 %% GET DATA
 chanlist = ["Vm", "DC"];
 
@@ -305,8 +303,6 @@ std_deep=std(tomean_deep,0,1);
 sem_sup=std_sup/sqrt(size(tomean_sup,1));
 sem_deep=std_deep/sqrt(size(tomean_deep,1));
 sem_diff=std_diff/sqrt(size(diff_trace,1));
-
-
 %% Make comparison of traces
 
 
@@ -336,8 +332,6 @@ pVal_table.diff_adj_pval=adj_p_diff';
 
 fname_pVal=fullfile(statssavedir,'average_traces');
 writetable(pVal_table,fname_pVal,'FileType','Spreadsheet');
-
-
 %% Plot Average traces
 
 fig_L23=figure;hold;
@@ -371,8 +365,6 @@ patch( [time(1,:),time(1,end:-1:1)],[mean_sup- sem_sup, mean_sup(end:-1:1)+ sem_
 
 fname_diff=fullfile(averagetracepath,'DC_bothtraces_subtracted');
 dtx_savefigure(fig_diff,fname_diff,'png','pdf','close');
-
-
 %% Plot single trials and overdraw filtered signal
 singletrialpath=fullfile(config{1}.imagesavedir,'filter_DC_overdraw');
 
