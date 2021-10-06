@@ -29,7 +29,7 @@ if ~isfolder(figpath)
 end
 
 config= wod_setparams;
-analysis_names={'timefreq_wod_blcorrected'};
+analysis_names={'timefreq_wod_blcorrected','timefreq_baseline_blcorrected'};
 
 for irat= 5:16
     
@@ -66,7 +66,7 @@ for irat= 5:16
         tfr=tfr_temp.(analysis_names{idata});
         clear tfr_temp
         
-        for itrial=1:size(LFP.trial,2)
+        for itrial=1%:size(LFP.trial,2)
             %select trial 1 of LFP and tfr
             cfgtemp=[];
             cfgtemp.trials=itrial;
@@ -98,7 +98,7 @@ for irat= 5:16
                 cfgtemp.masknans    = 'yes';
                 ft_singleplotTFR(cfgtemp, data_plot);
                 ft_pimpplot(fig, jet(5000))
-                caxis([1 3]);
+                caxis([0 2]);
                 xlim([-30 stats_all{irat}.ISO(ichan,itrial)]);
                 
                 
@@ -113,7 +113,7 @@ for irat= 5:16
                 end
                 
                 
-                fname_fig=fullfile(figpath,sprintf('tfr_lfp_Rat_%i_%s_trial_%i_wod',irat,chan_name_tfr,itrial));
+                fname_fig=fullfile(figpath,sprintf('tfr_lfp_Rat_%i_%s_trial_%i_%s',irat,chan_name_tfr,itrial,analysis_names{idata}));
                 dtx_savefigure(fig,fname_fig,'pdf','png','close');
                 
                 

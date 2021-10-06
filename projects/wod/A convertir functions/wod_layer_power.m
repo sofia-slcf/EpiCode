@@ -30,6 +30,8 @@ for idata=1:size(analysis_names,2)
                 
                 pool_pow.L23.(analysis_names{idata}).(iband)(irat,itrial)=nanmean(freq_data{irat}.(analysis_names{idata}).peak_value.(iband)(L23Idx,itrial));
                 pool_pow.L5.(analysis_names{idata}).(iband)(irat,itrial)=nanmean(freq_data{irat}.(analysis_names{idata}).peak_value.(iband)(L5Idx,itrial));
+                pool_time.L23.(analysis_names{idata}).(iband)(irat,itrial)=nanmean(freq_data{irat}.(analysis_names{idata}).peak_time.(iband)(L23Idx,itrial));
+                pool_time.L5.(analysis_names{idata}).(iband)(irat,itrial)=nanmean(freq_data{irat}.(analysis_names{idata}).peak_time.(iband)(L5Idx,itrial));
                 
             end %iband
         end %itrial
@@ -42,6 +44,9 @@ for idata=1:size(analysis_names,2)
         for iband= ["HF" "LF"]
             idx_zeros=pool_pow.(ilayer).(analysis_names{idata}).(iband)==0;
             pool_pow.(ilayer).(analysis_names{idata}).(iband)(idx_zeros)=nan;
+            
+            idx_zeros_time=pool_pow.(ilayer).(analysis_names{idata}).(iband)==0;
+            pool_time.(ilayer).(analysis_names{idata}).(iband)(idx_zeros_time)=nan;
         end %iband
     end %ilayer
 end %idata
@@ -49,6 +54,7 @@ end %idata
 %% Make table with data
 
 powertable=table.empty;
+timetable=table.empty;
 irow=0;
 for idata=1:size(analysis_names,2)
     for ilayer=["L23" "L5"]
@@ -61,9 +67,13 @@ for idata=1:size(analysis_names,2)
                 
                 for itrial=1:size(pool_pow.(ilayer).(analysis_names{idata}).(iband),2)
                     irow=irow+1;
-                    
+                    powertable.rat(irow)=irat;
                     powertable.power(irow)=pool_pow.(ilayer).(analysis_names{idata}).(iband)(irat,itrial);
                     powertable.normalisation(irow)=idata;
+                    
+                    timetable.rat(irow)=irat;
+                    timetable.time(irow)=pool_time.(ilayer).(analysis_names{idata}).(iband)(irat,itrial);
+                    timetable.normalisation(irow)=idata;
                     
                     if ilayer=="L23"
                         layerIdx=2;
@@ -80,6 +90,12 @@ for idata=1:size(analysis_names,2)
                     powertable.Layer(irow)=layerIdx;
                     powertable.pow_band(irow)=bandIdx;
                     powertable.trial(irow)=itrial;
+                    
+                    
+                    
+                    timetable.Layer(irow)=layerIdx;
+                    timetable.pow_band(irow)=bandIdx;
+                    timetable.trial(irow)=itrial;
                 end %itrial
             end %irat
         end %iband
@@ -99,7 +115,7 @@ fname_power=fullfile(anovastatpath,'anova_power_layerpooled');
 
 writetable(powertable,fname_power,'WriteRowNames',true,'FileType','spreadsheet');
 
-%% Make 2 by 2 comparisons
+%% Make 2 by 2 comparisons for power
 
 %between layers
 pval_powertable=table.empty;
@@ -164,6 +180,70 @@ writetable(pval_powertable,fname_pvalpower,'FileType','Spreadsheet')
 
 clear pval_powertable p 
 
+%% Make 2 by 2 comparisons for timings
+
+%between layers
+pval_timetable=table.empty;
+%Compare peak values according between layers for HF
+
+irow=0;
+for idata=1:size(analysis_names,2)
+    for iband= 1:2
+        irow=irow+1;
+
+sel= timetable.pow_band==iband & timetable.Layer==2 & timetable.normalisation==idata;
+datachan1= timetable.time(sel,:);
+
+
+sel_2=timetable.pow_band==iband & timetable.Layer==5 & timetable.normalisation==idata;
+datachan2= timetable.time(sel_2,:);
+
+    p= ranksum(datachan1,datachan2);
+    
+    pval_timetable.(analysis_names{idata})(irow)=p;
+    pval_timetable.pow_band(irow)=iband;
+
+
+% %correct all p-values
+% [~, ~, ~, adj_p]=fdr_bh(p);
+    end %iband
+end %idata
+fname_pvaltime=fullfile(cfg{4}.statsavedir,'freq_data','pval_time_layers');
+writetable(pval_timetable,fname_pvaltime,'FileType','Spreadsheet')
+
+clear pval_timetable p 
+
+
+%between bands
+pval_timetable=table.empty;
+%Compare peak values according between layers for HF
+
+irow=0;
+for idata=1:size(analysis_names,2)
+    for ilayer=[2 5]
+        irow=irow+1;
+
+sel= timetable.pow_band==1 & timetable.Layer==ilayer & timetable.normalisation==idata;
+datachan1= timetable.time(sel,:);
+
+
+sel_2=timetable.pow_band==2 & timetable.Layer==ilayer & timetable.normalisation==idata;
+datachan2= timetable.time(sel_2,:);
+
+    p= ranksum(datachan1,datachan2);
+    
+    pval_timetable.(analysis_names{idata})(irow)=p;
+    pval_timetable.Layer(irow)=ilayer;
+
+
+% %correct all p-values
+% [~, ~, ~, adj_p]=fdr_bh(p);
+    end %ilayer
+end %idata
+fname_pvaltime=fullfile(cfg{4}.statsavedir,'freq_data','pval_time_bands');
+writetable(pval_timetable,fname_pvaltime,'FileType','Spreadsheet')
+
+clear pval_powertable p 
 
 %% Make categorical barplot 
 sel= powertable.pow_band==1 & powertable.Layer==2 & powertable.normalisation==2;

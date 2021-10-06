@@ -16,6 +16,8 @@ end
 
 
 
+
+
 %% Make ANOVA for separated depths and trial number for WoD
 
 irow=0;
@@ -27,7 +29,7 @@ for irat= 1:size(data,2)
     
     for itrial=1:size(data{irat}.WoD.peak_time,2)
         irow=irow+1;
-        
+        calculated_table.irat(irow)             =irat;
         calculated_table.origin_time(irow)      =data{irat}.wod_origin_time(itrial);
         calculated_table.speed_up(irow)         =data{irat}.WoD.speed_up(itrial);
         calculated_table.speed_dn(irow)         =data{irat}.WoD.speed_dn(itrial);
@@ -45,6 +47,9 @@ nan_flag=find(isnan(calculated_table.speed_up));
 calculated_table([nan_flag],:)=[];
 nan_flag2=find(isnan(calculated_table.speed_dn));
 calculated_table([nan_flag2],:)=[];
+
+fname_calculatedtable=fullfile(anovastatpath,'table_calculated_data');
+
 
 %origin time
 mdl_origintime= fitlm(calculated_table, 'origin_time ~ trial + depthclass + depthclass:trial');
@@ -91,7 +96,7 @@ writetable(stats_oridepth,fname_oridepth,'WriteRowNames',true,'FileType','spread
 writetable(stats_anoxia,fname_anoxia,'WriteRowNames',true,'FileType','spreadsheet');
 writetable(stats_origintimewor,fname_origintime_wor,'WriteRowNames',true,'FileType','spreadsheet');
 writetable(stats_oridepthwor,fname_oridepthwor,'WriteRowNames',true,'FileType','spreadsheet');
-
+writetable(calculated_table,fname_calculatedtable,'FileType','spreadsheet');
 
 %% Make t-test comparison between groups and trials
 
@@ -213,7 +218,7 @@ for irat=1:size(cfg,2)
     for itrial=1:size(data{irat}.WoD.peak_time,2)
         irow= irow+1;
         sel=data{irat}.Depth(:,itrial)==data{irat}.wod_origin_depth(itrial);
-        
+        statstable.rat(irow)=irat;
         statstable.peakval(irow)=data{irat}.WoD.peak_value(sel,itrial);
         statstable.minslope(irow)=data{irat}.WoD.min_slope_value(sel,itrial);
         
@@ -224,6 +229,7 @@ for irat=1:size(cfg,2)
         statstable.chandepth(irow)=data{irat}.wod_origin_depth(itrial);
     end %itrial
 end %irat
+fname_measuredtable=fullfile(anovastatpath,'table_measured_data');
 
 
 %% Make ANOVA of parameters
@@ -247,6 +253,7 @@ fname_halfwidth=fullfile(anovastatpath,'anova_halfwidth_origin');
 writetable(stats_peakval,fname_peakval,'WriteRowNames',true,'FileType','spreadsheet');
 writetable(stats_minslope,fname_minslope,'WriteRowNames',true,'FileType','spreadsheet');
 writetable(stats_halfwidth,fname_halfwidth,'WriteRowNames',true,'FileType','spreadsheet');
+writetable(statstable,fname_measuredtable,'FileType','spreadsheet');
 
 %% Make 2 by 2 comparisons
 

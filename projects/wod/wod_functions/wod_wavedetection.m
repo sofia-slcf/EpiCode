@@ -17,7 +17,7 @@ for irat= 1:size(cfg,2)
     
     %Load LFP and Muse markers
     temp= load(fullfile(cfg{irat}.datasavedir,sprintf('%s%s_%s.mat',cfg{irat}.prefix,'LFP',cfg{irat}.name{1})));
-    LFP = temp.LFP{1}.(cfg{irat}.LFP.name{1});    
+    LFP = temp.LFP{1}.(cfg{irat}.LFP.name{1});
     clear temp
     MuseStruct               = readMuseMarkers(cfg{irat},false);
     
@@ -56,7 +56,6 @@ for irat= 1:size(cfg,2)
     
     for itrial = 1:size(LFP.trial,2)
         
-        itrial
         %recover trial real timings to use it with muse markers
         starttrial              = LFP_lpfilt.trialinfo.begsample / LFP_lpfilt.fsample;
         endtrial                = LFP_lpfilt.trialinfo.endsample / LFP_lpfilt.fsample;
@@ -66,7 +65,14 @@ for irat= 1:size(cfg,2)
         
         for ichan= 1:size(LFP.label,1)
             
+            
+            
+            
             ichan_name              = LFP_lpfilt.label{ichan};
+            
+            fprintf('Launching peak detections for %s trial %i and channel %s\n', cfg{irat}.prefix,itrial,ichan_name);
+            
+            
             
             %smoothing of signal with movmean
             LFP_lpfilt.trial{itrial}(ichan,:)= movmean(LFP_lpfilt.trial{itrial}(ichan,:),1000);
@@ -132,7 +138,49 @@ for irat= 1:size(cfg,2)
             end
             
             
+            fig_wod=figure;
+            plot(LFP_lpfilt.time{itrial},LFP_lpfilt.trial{itrial}(ichan,:));
+            hold on
+            scatter(t_peak_wod,-v_peak_wod,'rx');
+            xlim([t_peak_wod-10 t_peak_wod+10]);
+            
+            fig_wor=figure;
+            plot(LFP_lpfilt.time{itrial},LFP_lpfilt.trial{itrial}(ichan,:));
+            hold on
+            scatter(t_peak_wor,v_peak_wor,'rx');
+            xlim([t_peak_wor-10 t_peak_wor+10]);
+            
+            detect_wod=fullfile(detectsavedir,'WoD','peak',sprintf('%s',cfg{irat}.prefix));
+            detect_wor=fullfile(detectsavedir,'WoR','peak',sprintf('%s',cfg{irat}.prefix));
+            
+            if ~isfolder(detectsavedir)
+                mkdir(detectsavedir);
+            end
+            
+            if ~isfolder(detect_wod)
+                mkdir(detect_wod);
+            end
+            
+            if ~isfolder(detect_wor)
+                mkdir(detect_wor);
+            end
+            
+            fname_wod=fullfile(detect_wod,sprintf('%s_WoD%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
+            fname_wor=fullfile(detect_wor,sprintf('%s_WoR%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
+            
+            dtx_savefigure(fig_wod,fname_wod,'png','pdf','close');
+            dtx_savefigure(fig_wor,fname_wor,'png','pdf','close');
+            
+            clear fname_wod fname_wod detect_wod detect_wor
+            
+            
+            
+            
             %% Determine minimum and maximum slopes and extract timings and values
+            
+            fprintf('Launching max slope detections for %s trial %i and channel %s\n', cfg{irat}.prefix,itrial,ichan_name);
+
+            
             
             %             WOD window selection
             t1= t_peak_wod-30;
@@ -206,40 +254,40 @@ for irat= 1:size(cfg,2)
             end
             %             plot for visual control
             
-            %             fig_wodslope=figure;
-            %             plot(WOD_cut_slope.time{itrial},WOD_cut_slope.trial{itrial}(ichan,:));
-            %             hold on
-            %             scatter(t_peak_wodslope,-v_peak_wodslope,'x');
-            %             xlim([t_peak_wod-10 t_peak_wod+10]);
-            %
-            %             fig_worslope=figure;
-            %             plot(WOR_cut_slope.time{itrial},WOR_cut_slope.trial{itrial}(ichan,:));
-            %             hold on
-            %             scatter(t_peak_worslope,v_peak_worslope,'x');
-            %             xlim([t_peak_wor-10 t_peak_wor+10]);
-            %
-            %             detectslope_wod=fullfile(detectsavedir,'WoD','slope',sprintf('%s',cfg{irat}.prefix));
-            %             detectslope_wor=fullfile(detectsavedir,'WoR','slope',sprintf('%s',cfg{irat}.prefix));
-            %
-            %             if ~isfolder(detectsavedir)
-            %                 mkdir(detectsavedir);
-            %             end
-            %
-            %             if ~isfolder(detectslope_wod)
-            %                 mkdir(detectslope_wod);
-            %             end
-            %
-            %             if ~isfolder(detectslope_wor)
-            %                 mkdir(detectslope_wor);
-            %             end
-            %
-            %             fname_wodslope=fullfile(detectslope_wod,sprintf('%s_WoD%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
-            %             fname_worslope=fullfile(detectslope_wor,sprintf('%s_WoR%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
-            %
-            %             dtx_savefigure(fig_wodslope,fname_wodslope,'png','pdf','close');
-            %             dtx_savefigure(fig_worslope,fname_worslope,'png','pdf','close');
-            %
-            %             clear fname_wodslope fname_worslope detectslope_wod detectslope_wor
+            fig_wodslope=figure;
+            plot(WOD_cut_slope.time{itrial},WOD_cut_slope.trial{itrial}(ichan,:));
+            hold on
+            scatter(t_peak_wodslope,-v_peak_wodslope,'x');
+            xlim([t_peak_wod-10 t_peak_wod+10]);
+            
+            fig_worslope=figure;
+            plot(WOR_cut_slope.time{itrial},WOR_cut_slope.trial{itrial}(ichan,:));
+            hold on
+            scatter(t_peak_worslope,v_peak_worslope,'x');
+            xlim([t_peak_wor-10 t_peak_wor+10]);
+            
+            detectslope_wod=fullfile(detectsavedir,'WoD','slope',sprintf('%s',cfg{irat}.prefix));
+            detectslope_wor=fullfile(detectsavedir,'WoR','slope',sprintf('%s',cfg{irat}.prefix));
+            
+            if ~isfolder(detectsavedir)
+                mkdir(detectsavedir);
+            end
+            
+            if ~isfolder(detectslope_wod)
+                mkdir(detectslope_wod);
+            end
+            
+            if ~isfolder(detectslope_wor)
+                mkdir(detectslope_wor);
+            end
+            
+            fname_wodslope=fullfile(detectslope_wod,sprintf('%s_WoD%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
+            fname_worslope=fullfile(detectslope_wor,sprintf('%s_WoR%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
+            
+            dtx_savefigure(fig_wodslope,fname_wodslope,'png','pdf','close');
+            dtx_savefigure(fig_worslope,fname_worslope,'png','pdf','close');
+            
+            clear fname_wodslope fname_worslope detectslope_wod detectslope_wor
             
             % Determine threshold and crossing points
             
@@ -300,38 +348,43 @@ for irat= 1:size(cfg,2)
             stats_all{irat}.WoR.start_time(ichan,itrial)=  real_time_wor;
             stats_all{irat}.WoR.start_slope_value(ichan,itrial)=value_start_wor;
             
-            %             plot for visual control
-            %
-            %             fig_wodthr= figure;
-            %             plot(WOD_cut.time{itrial},WOD_cut.trial{itrial}(ichan,:));
-            %             xline(time_start_wod);
-            %
-            %             fig_worthr=figure;
-            %             plot(WOR_cut.time{itrial},WOR_cut.trial{itrial}(ichan,:));
-            %             xline(time_start_wor);
-            %
-            %
-            %             detectstart_wod=fullfile(detectsavedir,'WoD','start',sprintf('%s',cfg{irat}.prefix));
-            %             detectstart_wor=fullfile(detectsavedir,'WoR','start',sprintf('%s',cfg{irat}.prefix));
-            %
-            %             if ~isfolder(detectstart_wod)
-            %                 mkdir(detectstart_wod);
-            %             end
-            %
-            %             if ~isfolder(detectstart_wor)
-            %                 mkdir(detectstart_wor);
-            %             end
-            %
-            %             fname_wodstart=fullfile(detectstart_wod,sprintf('%s_WoD%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
-            %             fname_worstart=fullfile(detectstart_wor,sprintf('%s_WoR%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
-            %
-            %             dtx_savefigure(fig_wodthr,fname_wodstart,'png','pdf','close');
-            %             dtx_savefigure(fig_worthr,fname_worstart,'png','pdf','close');
+            %plot for visual control
+            
+            fig_wodthr= figure;
+            plot(WOD_cut.time{itrial},WOD_cut.trial{itrial}(ichan,:));
+            xline(time_start_wod);
+            
+            fig_worthr=figure;
+            plot(WOR_cut.time{itrial},WOR_cut.trial{itrial}(ichan,:));
+            xline(time_start_wor);
+            
+            
+            detectstart_wod=fullfile(detectsavedir,'WoD','start',sprintf('%s',cfg{irat}.prefix));
+            detectstart_wor=fullfile(detectsavedir,'WoR','start',sprintf('%s',cfg{irat}.prefix));
+            
+            if ~isfolder(detectstart_wod)
+                mkdir(detectstart_wod);
+            end
+            
+            if ~isfolder(detectstart_wor)
+                mkdir(detectstart_wor);
+            end
+            
+            fname_wodstart=fullfile(detectstart_wod,sprintf('%s_WoD%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
+            fname_worstart=fullfile(detectstart_wor,sprintf('%s_WoR%i_of_%i',ichan_name,itrial,size(LFP_lpfilt.trial,2)));
+            
+            dtx_savefigure(fig_wodthr,fname_wodstart,'png','pdf','close');
+            dtx_savefigure(fig_worthr,fname_worstart,'png','pdf','close');
             
             
             clear x_wodintersect x_worintersect detectstart_wod detectstart_wor fname_wodstart fname_worstart
             
             %% Determine Half-width of waves
+            
+            fprintf('Launching half-width of WoD for %s trial %i and channel %s\n', cfg{irat}.prefix,itrial,ichan_name);
+
+            
+            
             
             %Calculate half amplitude of waves
             wod_amp= -v_peak_wod ;
@@ -351,7 +404,12 @@ for irat= 1:size(cfg,2)
             y2 = ones(size(y1)) * half_wod;
             [x_wodintersect, y_wodintersect] = intersections(x1, y1, x2, y2);
             
-            WOD_halfwi= x_wodintersect(2)- x_wodintersect(1);
+            if isempty(x_wodintersect) || length(x_wodintersect)==1
+                WOD_halwi= nan;
+            else
+                
+                WOD_halfwi= x_wodintersect(2)- x_wodintersect(1);
+            end
             clear x1 y1 x2 y2
             
             %Store data
@@ -385,11 +443,7 @@ for irat= 1:size(cfg,2)
             
             %% Determine Iso delay with signal amplitude
             
-            irat
-            itrial
-            ichan
-            
-            
+           
             %select baseline
             voff_marker = MuseStruct{1}{1}.markers.Vent_Off.synctime(itrial);
             voff_time= voff_marker - starttrial(itrial) + offsettrial(itrial);
@@ -429,7 +483,7 @@ for irat= 1:size(cfg,2)
             thr_cross=find(diff_signal);
             
             
-            if isempty(thr_cross) 
+            if isempty(thr_cross)
                 thr_iso=0.5*baseline_amp;
                 idx_signal= Activity.trial{itrial}>thr_iso;
                 diff_signal=diff(idx_signal);
