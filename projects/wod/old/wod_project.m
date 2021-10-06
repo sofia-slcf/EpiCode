@@ -75,6 +75,8 @@ ipart = 1; %ipart is always 1 for this project
                 %search channel into LFP data to remane it
                 chan_idx = strcmp(LFP.label, config{irat}.LFP.allchannel{ichan});
                 LFP.label{chan_idx} = new_name;
+                %organize channel in a folder by structure
+                brainregion=config{irat}.LFP.structure{ichan}
             end
         end
         

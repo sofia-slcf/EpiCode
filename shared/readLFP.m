@@ -507,6 +507,7 @@ for markername = string(cfg.LFP.name)
 
 end % markername
 
-if isempty(markername)
-    fprintf('cfg.LFP.name is empty, no LFP is read\n');
+% if isempty(markername)
+%     fprintf('cfg.LFP.name is empty, no LFP is read\n');
+% end
 end

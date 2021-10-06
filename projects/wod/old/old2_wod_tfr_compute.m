@@ -9,7 +9,7 @@ end
 % time frequency analysis of WOD Neuralynx data
 % Parameters are set in wod_setparams.m
 
-%rename chans according to their real deepness.
+%rename chans according to their real depth.
 %the name is in cfg.LFP.channel, and it is renamed with the name at
 %the same index in cfg.LFP.rename
 %16 is surface, 1 is the deepest. 0 is the respi.
@@ -71,8 +71,13 @@ for itrial = 1:size(LFP.trial,2)
     endtrial                = LFP_trial.trialinfo.endsample / LFP_trial.fsample;
     offsettrial             = LFP_trial.trialinfo.offset / LFP_trial.fsample;
     
+    %%sofia adds
+    if size(cfg.name,2)==2
+    iparam=["long" "short"]
+    elseif size(cfg.name,2)==1
+    iparam=["short"]
     
-    for iparam= ["long" "short"]
+    for iparam =iparam
         
         
         %do time frequency analysis
@@ -80,7 +85,7 @@ for itrial = 1:size(LFP.trial,2)
         cfgtemp.channel                 = 'all';
         cfgtemp.method                  = 'mtmconvol';
         cfgtemp.output                  = 'pow';
-        cfgtemp.taper                   = 'dpss'; %default = dpss
+        cfgtemp.taper                   = 'dpss'; %default = dpss. Pour débuguer" : mettre 'hanning'
         cfgtemp.pad                     = 'nextpow2';
         cfgtemp.keeptrials              = 'no';
         cfgtemp.tapsmofrq               = cfg.timefreq.tapsmofrq.(iparam);
@@ -119,13 +124,13 @@ for itrial = 1:size(LFP.trial,2)
         
     end %iparam
     
-    for ichan = 1:size(timefreq_alldata{itrial}.long.label,1)
+    for ichan = 1:size(timefreq_alldata{itrial}.(iparam).label,1)%(timefreq_alldata{itrial}.long.label,1)
 
         %% select channel for short param
-        ichan_name              = timefreq_alldata{itrial}.short.label{ichan};
+        ichan_name              = timefreq_alldata{itrial}.(iparam).label{ichan}%timefreq_alldata{itrial}.short.label{ichan};
         cfgtemp                 = [];
         cfgtemp.channel         = ichan_name;
-        timefreq_ichan_temp   	= ft_selectdata(cfgtemp,timefreq_alldata{itrial}.short);
+        timefreq_ichan_temp   	= ft_selectdata(cfgtemp,timefreq_alldata{itrial}.(iparam))%ft_selectdata(cfgtemp,timefreq_alldata{itrial}.short);
         
         
         %% WOD DATA : find WOD peak per channel, and normalize time per channel
@@ -138,8 +143,9 @@ for itrial = 1:size(LFP.trial,2)
         chan_idx    = strcmp(LFP_lpfilt.label, ichan_name);
         
         %get hand-annotated wod timing
-        wod_marker = MuseStruct{1}{1}.markers.WOD.synctime(itrial);
-        
+        %wod_marker = MuseStruct{1}{1}.markers.WOD.synctime(itrial);corrigé par sofia
+       
+        wod_marker = MuseStruct{1}{itrial}.markers.WOD.synctime(1)
         %select times where to search WOD peak
         t = LFP_lpfilt.time{1};
         t_1 = t > (wod_marker + cfg.LFP.wod_toisearch(1) - starttrial + offsettrial);
@@ -236,21 +242,26 @@ for itrial = 1:size(LFP.trial,2)
 
          
         %select channel for long param
-        ichan_name              = timefreq_alldata{itrial}.long.label{ichan};
-        cfgtemp                 = [];
-        cfgtemp.channel         = ichan_name;
-        timefreq_ichan_temp   	= ft_selectdata(cfgtemp,timefreq_alldata{itrial}.long);
+        if cfg.LFP.recov{itrial}==0  %sofia, à vérifier par Antoine
+           continue
+        else
+            ichan_name              = timefreq_alldata{itrial}.long.label{ichan};
+            cfgtemp                 = [];
+            cfgtemp.channel         = ichan_name;
+            timefreq_ichan_temp   	= ft_selectdata(cfgtemp,timefreq_alldata{itrial}.long);
+        end
         
         %% RECOVERY DATA : Change T0 from Vent_Off to Vent_On
         %MuseStruct{1}{1}.markers.Vent_Off.synctime(itrial) - MuseStruct{1}{1}.markers.Vent_On.synctime(itrial);
         
         if cfg.LFP.recov{itrial}==0
+            timefreq_recovery{itrial}.(ichan_name) = []; %Paul, à vérifier par Antoine
             continue
         else
         
-        timeshift                                           = cfg.epoch.toi.(cfg.LFP.name{1})(2) + cfg.epoch.pad.(cfg.LFP.name{1}) - timefreq_ichan_temp.time(end);%MuseStruct{1}{1}.markers.Vent_On.synctime(itrial) - MuseStruct{1}{1}.markers.Vent_Off.synctime(itrial);
+        timeshift                                    = cfg.epoch.toi.(cfg.LFP.name{1})(2) + cfg.epoch.pad.(cfg.LFP.name{1}) - timefreq_ichan_temp.time(end);%MuseStruct{1}{1}.markers.Vent_On.synctime(itrial) - MuseStruct{1}{1}.markers.Vent_Off.synctime(itrial);
         timefreq_recovery{itrial}.(ichan_name)       = timefreq_ichan_temp;
-        timefreq_recovery{itrial}.(ichan_name).time 	= timefreq_ichan_temp.time + timeshift;
+        timefreq_recovery{itrial}.(ichan_name).time  = timefreq_ichan_temp.time + timeshift;
         
         cfgtemp = [];
         cfgtemp.latency = [0 cfg.epoch.toi.(cfg.LFP.name{1})(2)];
@@ -378,12 +389,12 @@ end %itrial
 
 
 % add empty missing channels channels to have the same channels between rats
-for itrial = 1:size(timefreq_recovery,2)
+for itrial = 1:size(LFP.trial,2)%(timefreq_recovery,2)
     for chan_name = string(cfg.LFP.allchannel(1:end-1))
         chan_renamed = sprintf('E%d',str2num(regexp(chan_name,'\d*','Match')));
-        if ~isfield(timefreq_recovery{itrial}, chan_renamed)
-            timefreq_recovery{itrial}.(chan_renamed)            = [];
-            timefreq_recovery_blcorrected{itrial}.(chan_renamed)            = [];
+        %if  ~isfield(cfg.LFP,'rename')%(timefreq_recovery{itrial}, chan_renamed)
+%             timefreq_recovery{itrial}.(chan_renamed)            = [];
+%             timefreq_recovery_blcorrected{itrial}.(chan_renamed)            = [];
             
             timefreq_wod{itrial}.(chan_renamed)                 = [];
             timefreq_wod_blcorrected{itrial}.(chan_renamed)                 = [];
@@ -391,17 +402,17 @@ for itrial = 1:size(timefreq_recovery,2)
             timefreq_wod_timenorm{itrial}.(chan_renamed)        = [];
             timefreq_wod_timenorm_blcorrected{itrial}.(chan_renamed)                 = [];
             
-            timefreq_wor{itrial}.(chan_renamed)                 = [];
-            timefreq_wor_blcorrected{itrial}.(chan_renamed)                 = [];
-            
-            timefreq_wor_timenorm{itrial}.(chan_renamed)        = [];
-            timefreq_wor_timenorm_blcorrected{itrial}.(chan_renamed)        = [];
+%             timefreq_wor{itrial}.(chan_renamed)                 = [];
+%             timefreq_wor_blcorrected{itrial}.(chan_renamed)                 = [];
+%             
+%             timefreq_wor_timenorm{itrial}.(chan_renamed)        = [];
+%             timefreq_wor_timenorm_blcorrected{itrial}.(chan_renamed)        = [];
             
             timefreq_baseline{itrial}.(chan_renamed)            = [];
             timefreq_baseline_blcorrected{itrial}.(chan_renamed)            = [];
             
-            log_timefreq_recovery{itrial}.(chan_renamed)            = [];
-            log_timefreq_recovery_blcorrected{itrial}.(chan_renamed)            = [];
+%             log_timefreq_recovery{itrial}.(chan_renamed)            = [];
+%             log_timefreq_recovery_blcorrected{itrial}.(chan_renamed)            = [];
             
             log_timefreq_wod{itrial}.(chan_renamed)                 = [];
             log_timefreq_wod_blcorrected{itrial}.(chan_renamed)                 = [];
@@ -409,16 +420,16 @@ for itrial = 1:size(timefreq_recovery,2)
             log_timefreq_wod_timenorm{itrial}.(chan_renamed)        = [];
             log_timefreq_wod_timenorm_blcorrected{itrial}.(chan_renamed)                 = [];
             
-            log_timefreq_wor{itrial}.(chan_renamed)                 = [];
-            log_timefreq_wor_blcorrected{itrial}.(chan_renamed)                 = [];
-            
-            log_timefreq_wor_timenorm{itrial}.(chan_renamed)        = [];
-            log_timefreq_wor_timenorm_blcorrected{itrial}.(chan_renamed)        = [];
+%             log_timefreq_wor{itrial}.(chan_renamed)                 = [];
+%             log_timefreq_wor_blcorrected{itrial}.(chan_renamed)                 = [];
+%             
+%             log_timefreq_wor_timenorm{itrial}.(chan_renamed)        = [];
+%             log_timefreq_wor_timenorm_blcorrected{itrial}.(chan_renamed)        = [];
             
             log_timefreq_baseline{itrial}.(chan_renamed)            = [];
             log_timefreq_baseline_blcorrected{itrial}.(chan_renamed)            = [];
             
-        end
+       % end
     end
 end
 
@@ -437,22 +448,22 @@ save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_wod_timenorm.mat']),'lo
 save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_wod_timenorm_blcorrected.mat']),'log_timefreq_wod_timenorm_blcorrected','-v7.3');
 
 %Recovery data : t0 at Vent_On, t_end at Vent_On+3600s:
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_recovery.mat']),'timefreq_recovery','-v7.3');
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_recovery_blcorrected.mat']),'timefreq_recovery_blcorrected','-v7.3');
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_recovery.mat']),'log_timefreq_recovery','-v7.3');
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_recovery_blcorrected.mat']),'log_timefreq_recovery_blcorrected','-v7.3');
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_recovery.mat']),'timefreq_recovery','-v7.3');
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_recovery_blcorrected.mat']),'timefreq_recovery_blcorrected','-v7.3');
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_recovery.mat']),'log_timefreq_recovery','-v7.3');
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_recovery_blcorrected.mat']),'log_timefreq_recovery_blcorrected','-v7.3');
 
-%WOR data : power normalized with baseline period (time not normalized) :
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_wor.mat']),'timefreq_wor','-v7.3');
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_wor_blcorrected.mat']),'timefreq_wor_blcorrected','-v7.3');
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_wor.mat']),'log_timefreq_wor','-v7.3');
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_wor_blcorrected.mat']),'log_timefreq_wor_blcorrected','-v7.3');
-
-%WOR data : time normalized between vent_off and wor peak, per channel. power normalized with baseline period :
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_wor_timenorm.mat']),'timefreq_wor_timenorm','-v7.3');
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_wor_timenorm_blcorrected.mat']),'timefreq_wor_timenorm_blcorrected','-v7.3');
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_wor_timenorm.mat']),'log_timefreq_wor_timenorm','-v7.3');
-save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_wor_timenorm_blcorrected.mat']),'log_timefreq_wor_timenorm_blcorrected','-v7.3');
+% %WOR data : power normalized with baseline period (time not normalized) :
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_wor.mat']),'timefreq_wor','-v7.3');
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_wor_blcorrected.mat']),'timefreq_wor_blcorrected','-v7.3');
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_wor.mat']),'log_timefreq_wor','-v7.3');
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_wor_blcorrected.mat']),'log_timefreq_wor_blcorrected','-v7.3');
+% 
+% %WOR data : time normalized between vent_off and wor peak, per channel. power normalized with baseline period :
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_wor_timenorm.mat']),'timefreq_wor_timenorm','-v7.3');
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_wor_timenorm_blcorrected.mat']),'timefreq_wor_timenorm_blcorrected','-v7.3');
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_wor_timenorm.mat']),'log_timefreq_wor_timenorm','-v7.3');
+% save(fullfile(cfg.datasavedir,[cfg.prefix, 'log_timefreq_wor_timenorm_blcorrected.mat']),'log_timefreq_wor_timenorm_blcorrected','-v7.3');
 
 %Baseline data: t0 at Vent_Off analysis made before Vent_Off
 save(fullfile(cfg.datasavedir,[cfg.prefix, 'timefreq_baseline.mat']),'timefreq_baseline','-v7.3');

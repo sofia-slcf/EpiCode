@@ -4,6 +4,8 @@ if isempty(cfg)
     return
 end
 
+MuseStruct = concatenateMuseMarkers(cfg,MuseStruct,false);
+
 %remove physio constant channels
 cfgtemp         = [];
 cfgtemp.channel = {'all', '-E0', '-Respi', '-ECG'};
@@ -41,9 +43,6 @@ for itrial= 1:size(LFP.trial,2)
     starttrial              = LFP_trial.trialinfo.begsample / LFP_trial.fsample;
     endtrial                = LFP_trial.trialinfo.endsample / LFP_trial.fsample;
     offsettrial             = LFP_trial.trialinfo.offset / LFP_trial.fsample;
-    
-    
-        
         
         %do time frequency analysis
         cfgtemp                         = [];
@@ -62,11 +61,11 @@ for itrial= 1:size(LFP.trial,2)
         %replace artifacts by nans
         %need to remove artefacts after time freq analysis, because
         %any nan in the lfp data creates a time freq with only nan values
-        if isfield(MuseStruct{1}{1}.markers, 'BAD__START__')
-            if isfield(MuseStruct{1}{1}.markers.BAD__START__, 'synctime')
+        if isfield(MuseStruct{1}.markers, 'BAD__START__')
+            if isfield(MuseStruct{1}.markers.BAD__START__, 'synctime')
                 %get bad timings
-                bad_start                   = MuseStruct{1}{1}.markers.BAD__START__.synctime;
-                bad_end                     = MuseStruct{1}{1}.markers.BAD__END__.synctime;
+                bad_start                   = MuseStruct{1}.markers.BAD__START__.synctime;
+                bad_end                     = MuseStruct{1}.markers.BAD__END__.synctime;
                 if length(bad_start) ~= length(bad_end)
                     error('not the same amount of bad start and end markers');
                 end
@@ -74,6 +73,7 @@ for itrial= 1:size(LFP.trial,2)
                 t_lfp                   = LFP_trial.time{1};
                 t_tfr                   = timefreq_alldata{itrial}.time;
                 bad_sel                 = find(bad_start >= starttrial & bad_start <= endtrial);
+                %bad_sel2                 = find(bad_start >= starttrial & bad_start <= endtrial);
                 %go through each bad timing
                 for ibad = bad_sel
                     %remove lfp artefacts
@@ -103,7 +103,8 @@ for itrial= 1:size(LFP.trial,2)
         chan_idx    = strcmp(LFP_lpfilt.label, ichan_name);
         
         %get hand-annotated wod timing
-        wod_marker = MuseStruct{1}{1}.markers.WOD.synctime(itrial);
+        wod_marker = MuseStruct{1}{itrial}.markers.WOD.synctime%(itrial);%sofia changed :  MuseStruct{1} to  MuseStruct{1}{itrial} & synctime(itrial)to synctime
+        wod_marker = MuseStruct{1}.markers.WOD.synctime(itrial)%(itrial);%sofia changed :  MuseStruct{1} to  MuseStruct{1}{itrial} & synctime(itrial)to synctime
         
         %select times where to search WOD peak
         t = LFP_lpfilt.time{1};

@@ -17,3 +17,6 @@ Besides, I changed a bit the selection of trials. Before, the trials to remove w
 
 ft_spike_xcorrs, line commented with '%paul'
 Correct one error in one specific case due to histc output if first argument is of length 1
+
+ft_append_common
+ajout du cas dimord = 'chan_freq_time'
