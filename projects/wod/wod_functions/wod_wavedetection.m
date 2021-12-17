@@ -1,17 +1,29 @@
 function stats_all = wod_wavedetection(cfg, force)
 
-fname_out = fullfile(cfg{4}.datasavedir,'Detection', sprintf('wod_wavedetection_allrat.mat'));
-if exist(fname_out, 'file') && force == false
-    load(fname_out, 'stats_all');
-    return
-end
+
+
+% MuseStruct = concatenateMuseMarkers(cfg,MuseStruct,false)
+% added by sofia
+% 
+% fname_out = fullfile(cfg.datasavedir,'Detection', sprintf('wod_wavedetection_allrat.mat'));
+% if exist(fname_out, 'file') && force == false
+%     load(fname_out, 'stats_all');
+%     return
+% end
 
 for irat= 1:size(cfg,2)
-    
     
     if isempty(cfg{irat})
         continue
     end
+    
+    fname_out = fullfile(cfg{irat}.datasavedir,'Detection', sprintf('wod_wavedetection_allrat.mat'));
+    if exist(fname_out, 'file') && force == false
+    load(fname_out, 'stats_all');
+    return
+    end
+
+    
     detectsavedir=fullfile(cfg{irat}.imagesavedir,'detection');
     iratname= sprintf('Rat_%i',irat);
     
@@ -21,12 +33,14 @@ for irat= 1:size(cfg,2)
     clear temp
     MuseStruct               = readMuseMarkers(cfg{irat},false);
     
-    %vérifier qu'il y a bien autant de trials que de marqueurs Vent_Off
-    startmarker = cfg{irat}.muse.startmarker.(cfg{irat}.LFP.name{1});
-    if size(LFP.trial,2) ~= size(MuseStruct{1}{1}.markers.(startmarker).synctime,2)
-        error('Not the same number of trials that of marker start for %s. \nCheck that begin/end of each trial is not before start of file or after end of file', cfg{irat}.prefix(1:end-1));
-    end
+    MuseStruct = concatenateMuseMarkers(cfg{irat},MuseStruct,true)%added by sofia
     
+    %vérifier qu'il y a bien autant de trials que de marqueurs Vent_Off
+%     startmarker = cfg{irat}.muse.startmarker.(cfg{irat}.LFP.name{1});
+%     if size(LFP.trial,2) ~= size(MuseStruct{1}.markers.(startmarker).synctime,2)
+%         error('Not the same number of trials that of marker start for %s. \nCheck that begin/end of each trial is not before start of file or after end of file', cfg{irat}.prefix(1:end-1));
+%     end
+%     
     %rename channels according to depth
     for ichan = 1:size(cfg{irat}.LFP.channel, 2)
         idx = strcmp(cfg{irat}.LFP.channel{ichan}, LFP.label);
@@ -88,7 +102,7 @@ for irat= 1:size(cfg,2)
             %             case channel numbers were schuffled by fieldtrip)
             chan_idx    = strcmp(LFP_lpfilt.label, ichan_name);
             
-            wod_marker = MuseStruct{1}{1}.markers.WOD.synctime(itrial);
+            wod_marker = MuseStruct{1}.markers.WOD.synctime(itrial);
             wod_markertime= wod_marker - starttrial(itrial) + offsettrial(itrial);
             %select times where to search WOD peak
             t = LFP_lpfilt.time{itrial};
@@ -100,7 +114,7 @@ for irat= 1:size(cfg,2)
             clear t t_1 t_2 t_sel
             
             %WOR detection
-            wor_marker = MuseStruct{1}{1}.markers.WOR.synctime(itrial);
+            wor_marker = MuseStruct{1}.markers.WOR.synctime(itrial);
             %select times where to search WOR peak
             
             t = LFP_lpfilt.time{itrial};
@@ -127,7 +141,7 @@ for irat= 1:size(cfg,2)
             end
             
             %             express wor data compared to Vent_On
-            t_VentOn= MuseStruct{1}{1}.markers.Vent_On.synctime(itrial)-starttrial(itrial) +offsettrial(itrial);
+            t_VentOn= MuseStruct{1}.markers.Vent_On.synctime(itrial)-starttrial(itrial) +offsettrial(itrial);
             if  cfg{irat}.LFP.recov{itrial}==0
                 stats_all{irat}.WoR.peak_time(ichan,itrial)=nan;
                 stats_all{irat}.WoR.peak_value(ichan,itrial)= nan;
@@ -243,7 +257,7 @@ for irat= 1:size(cfg,2)
             
             %             save values
             %             express timings of WoR according to Vent On
-            t_VentOn= MuseStruct{1}{1}.markers.Vent_On.synctime(itrial)-starttrial(itrial) +offsettrial(itrial);
+            t_VentOn= MuseStruct{1}.markers.Vent_On.synctime(itrial)-starttrial(itrial) +offsettrial(itrial);
             real_timeslope_wor= t_peak_worslope - t_VentOn;
             stats_all{irat}.WoR.min_slope_time(ichan,itrial)=  real_timeslope_wor;
             stats_all{irat}.WoR.min_slope_value(ichan,itrial)=   v_peak_worslope;
@@ -439,13 +453,13 @@ for irat= 1:size(cfg,2)
             clear x_wodintersect  y_wodintersect
             %% Create structure with electrode depths
             
-            stats_all{irat}.Depth(ichan,itrial)=cfg{irat}.LFP.chan_depth{ichan};
-            
+            %stats_all{irat}.Depth(ichan,itrial)=cfg{irat}.LFP.chan_depth{ichan};
+            stats_all{irat}.Depth(ichan,itrial)=cfg{irat}.LFP.chan_depth(ichan) % remplacé par sofia
             %% Determine Iso delay with signal amplitude
             
            
             %select baseline
-            voff_marker = MuseStruct{1}{1}.markers.Vent_Off.synctime(itrial);
+            voff_marker = MuseStruct{1}.markers.Vent_Off.synctime(itrial);
             voff_time= voff_marker - starttrial(itrial) + offsettrial(itrial);
             
             %select baseline
@@ -568,7 +582,7 @@ for irat= 1:size(cfg,2)
         %% Calculate anoxia duration
         
         %until wod
-        voff_marker = MuseStruct{1}{1}.markers.Vent_Off.synctime(itrial);
+        voff_marker = MuseStruct{1}.markers.Vent_Off.synctime(itrial);
         voff_time= voff_marker - starttrial(itrial) + offsettrial(itrial);
         
         wod_time= wod_marker - starttrial(itrial) + offsettrial(itrial);
@@ -576,7 +590,7 @@ for irat= 1:size(cfg,2)
         stats_all{irat}.before_wod(itrial)=wod_time-voff_time;
         
         %total anoxia
-        von_marker = MuseStruct{1}{1}.markers.Vent_On.synctime(itrial);
+        von_marker = MuseStruct{1}.markers.Vent_On.synctime(itrial);
         von_time= von_marker - starttrial(itrial) + offsettrial(itrial);
         
         stats_all{irat}.anoxia(itrial)=von_time-voff_time;

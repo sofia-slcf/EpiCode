@@ -89,7 +89,7 @@ elseif ~force
             fprintf('Reading %s\n', fname);
             count = 0;
             err_count = 0;
-            while count == err_count
+            while count == err_count 
                 try
                     temp = load(fname);
                     for ipart = 1 : size(cfg.directorylist, 2)
@@ -99,6 +99,9 @@ elseif ~force
                     err_count = err_count + 1;
                 end
                 count = count + 1;
+                if count > 1000
+                    error('error while loading LFP');
+                end
             end
         else
             fprintf('(re-) computing LFP data for %s\n', markername);
@@ -414,8 +417,9 @@ for markername = string(cfg.LFP.name)
                 ft_progress(ievent/size(LFP{ipart}.(markername).trialinfo, 1), 'Looking for overlap with artefacts in trial %d of %d \n', ievent, size(LFP{ipart}.(markername).trialinfo, 1))
                 trlstart = LFP{ipart}.(markername).trialinfo.starttime(ievent);
                 trlend   = LFP{ipart}.(markername).trialinfo.endtime(ievent);
-
-                for idir = LFP{ipart}.(markername).trialinfo.idir(ievent)%1 : size(MuseStruct{ipart}, 2)
+                 
+                %FIXME
+                for idir = size(MuseStruct{ipart}, 2)%LFP{ipart}.(markername).trialinfo.idir(ievent)%1 : size(MuseStruct{ipart}, 2)
 
                     if ~isfield(MuseStruct{ipart}{idir}.markers, 'BAD__START__')
                         continue
@@ -457,7 +461,8 @@ for markername = string(cfg.LFP.name)
                 trlstart = LFP{ipart}.(markername).trialinfo.starttime(ievent);
                 trlend   = LFP{ipart}.(markername).trialinfo.endtime(ievent);
 
-                for idir = LFP{ipart}.(markername).trialinfo.idir(ievent)%1 : size(MuseStruct{ipart}, 2)
+                %FIXME
+                for idir = size(MuseStruct{ipart}, 2)%LFP{ipart}.(markername).trialinfo.idir(ievent)%1 : size(MuseStruct{ipart}, 2)
 
                     if ~isfield(MuseStruct{ipart}{idir}.markers, 'BAD__START__')
                         continue

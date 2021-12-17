@@ -1,5 +1,7 @@
 function wod_tfr_compute(cfg,MuseStruct,LFP)
 
+%
+
 if isempty(cfg)
     return
 end
@@ -30,7 +32,7 @@ cfgtemp.lpfilter    = 'yes';
 cfgtemp.lpfilttype  = 'fir';
 
 cfgtemp.lpfreq      = cfg.LFP.lpfilter_wod_detection;
-LFP_lpfilt      = ft_preprocessing(cfgtemp, LFP_cleaned);
+LFP_lpfilt          = ft_preprocessing(cfgtemp, LFP_cleaned);
 
 for itrial= 1:size(LFP.trial,2)
 
@@ -38,11 +40,38 @@ for itrial= 1:size(LFP.trial,2)
     cfgtemp         = [];
     cfgtemp.trials  = itrial;
     LFP_trial       = ft_selectdata(cfgtemp, LFP_cleaned);
+
+%FIXME
+%correction approté par sofia grace à la correction préccédente de Paul le 01/12/2021    
+%     %recover trial real timings to use it with muse markers
+%     starttrial              = LFP_trial.trialinfo.begsample / LFP_trial.fsample;%temps en sec
+%     endtrial                = LFP_trial.trialinfo.endsample / LFP_trial.fsample;
+%     offsettrial             = LFP_trial.trialinfo.offset / LFP_trial.fsample;
+   if size(MuseStruct{1}.starttime,2) == 1 || itrial == 1
+        
+        starttrial( itrial)              = LFP_lpfilt.trialinfo.begsample(itrial) / LFP_lpfilt.fsample;
+        endtrial(itrial)                = LFP_lpfilt.trialinfo.endsample(itrial) / LFP_lpfilt.fsample;
+        offsettrial( itrial)             = LFP_lpfilt.trialinfo.offset(itrial) / LFP_lpfilt.fsample;
+        
+    else %un cas particulier si plusieurs dossiers (au lieu de données concaténées)
+        
+        idir                            = LFP_lpfilt.trialinfo.idir(itrial);
+        length_previous_dir = 0;
+        for i = 2:idir
+            length_previous_dir = length_previous_dir + seconds(MuseStruct{1}.endtime{idir-1} - MuseStruct{1}.starttime{idir-1});
+        end
+        starttrial(itrial)           = LFP_lpfilt.trialinfo.begsample(itrial) / LFP_lpfilt.fsample + length_previous_dir;
+        endtrial(itrial)             = LFP_lpfilt.trialinfo.endsample(itrial) / LFP_lpfilt.fsample + length_previous_dir;
+        offsettrial(itrial)         = LFP_lpfilt.trialinfo.offset(itrial) / LFP_lpfilt.fsample;
+        
+    end
+
+
+
+
+
     
-    %recover trial real timings to use it with muse markers
-    starttrial              = LFP_trial.trialinfo.begsample / LFP_trial.fsample;
-    endtrial                = LFP_trial.trialinfo.endsample / LFP_trial.fsample;
-    offsettrial             = LFP_trial.trialinfo.offset / LFP_trial.fsample;
+    
         
         %do time frequency analysis
         cfgtemp                         = [];
@@ -67,32 +96,52 @@ for itrial= 1:size(LFP.trial,2)
                 bad_start                   = MuseStruct{1}.markers.BAD__START__.synctime;
                 bad_end                     = MuseStruct{1}.markers.BAD__END__.synctime;
                 if length(bad_start) ~= length(bad_end)
-                    error('not the same amount of bad start and end markers');
+                    error('not the same numbers of bad start and end markers');
                 end
                 %                         t_tfr                   = timefreq_alldata{itrial}.time;
                 t_lfp                   = LFP_trial.time{1};
                 t_tfr                   = timefreq_alldata{itrial}.time;
-                bad_sel                 = find(bad_start >= starttrial & bad_start <= endtrial);
+                bad_sel                 = find(bad_start >= starttrial(itrial) & bad_start <= endtrial(itrial));
                 %bad_sel2                 = find(bad_start >= starttrial & bad_start <= endtrial);
                 %go through each bad timing
-                for ibad = bad_sel
-                    %remove lfp artefacts
-                    bad_period_lfp = t_lfp >= (bad_start(ibad)- starttrial + offsettrial) & t_lfp <= (bad_end(ibad)- starttrial + offsettrial);
-                    LFP_cleaned.trial{itrial}(:,bad_period_lfp) = nan(size(LFP_cleaned.trial{itrial},1),sum(bad_period_lfp));
-                    %remove tfr artefacts: all window with at least one artefacted sample
-                    bad_period_tfr = t_tfr >= (bad_start(ibad)- starttrial + offsettrial) - cfg.timefreq.t_ftimwin/2 & t_tfr <= (bad_end(ibad)- starttrial + offsettrial) + cfg.timefreq.t_ftimwin/2;
-                    timefreq_alldata{itrial}.powspctrm(:,:,bad_period_tfr) = nan(size(timefreq_alldata{itrial}.powspctrm,1),size(timefreq_alldata{itrial}.powspctrm,2),sum(bad_period_tfr));
-                end
+                
+                %FIXME
+                %correction apporté par Sofia le 7/12/2021
+%                 for ibad = bad_sel
+%                     %remove lfp artefacts
+%                     bad_period_lfp = t_lfp >= (bad_start(ibad)- starttrial + offsettrial) & t_lfp <= (bad_end(ibad)- starttrial + offsettrial);
+%                     LFP_cleaned.trial{itrial}(:,bad_period_lfp) = nan(size(LFP_cleaned.trial{itrial},1),sum(bad_period_lfp));
+%                     %remove tfr artefacts: all window with at least one artefacted sample
+%                     bad_period_tfr = t_tfr >= (bad_start(ibad)- starttrial + offsettrial) - cfg.timefreq.t_ftimwin/2 & t_tfr <= (bad_end(ibad)- starttrial + offsettrial) + cfg.timefreq.t_ftimwin/2;
+%                     timefreq_alldata{itrial}.powspctrm(:,:,bad_period_tfr) = nan(size(timefreq_alldata{itrial}.powspctrm,1),size(timefreq_alldata{itrial}.powspctrm,2),sum(bad_period_tfr));
+%                 end
+               
+                  %voir avec Paul si c'est la bonne correction
+                  for bad_number=1:length(bad_sel)
+                      for ibad = bad_sel(bad_number)
+                          %remove lfp artefacts
+                          bad_period_lfp = t_lfp >= (bad_start(ibad)- starttrial(itrial) + offsettrial(itrial)) & t_lfp <= (bad_end(ibad)- starttrial(itrial) + offsettrial(itrial));
+                          LFP_cleaned.trial{itrial}(:,bad_period_lfp) = nan(size(LFP_cleaned.trial{itrial},1),sum(bad_period_lfp));
+                          %remove tfr artefacts: all window with at least one artefacted sample
+                          bad_period_tfr = t_tfr >= (bad_start(ibad)- starttrial(itrial) + offsettrial(itrial)) - cfg.timefreq.t_ftimwin/2 & t_tfr <= (bad_end(ibad)- starttrial(itrial) + offsettrial(itrial)) + cfg.timefreq.t_ftimwin/2;
+                          timefreq_alldata{itrial}.powspctrm(:,:,bad_period_tfr) = nan(size(timefreq_alldata{itrial}.powspctrm,1),size(timefreq_alldata{itrial}.powspctrm,2),sum(bad_period_tfr));
+                      end
+                  end
+
                 clear bad_sel t_tfr t_lfp
             end
         end
+        
         for ichan = 1:size(timefreq_alldata{itrial}.label,1)
 
         %% select channel for short param
         ichan_name              = timefreq_alldata{itrial}.label{ichan};
+         %ichan_name= LFP_lpfilt.label{ichan};
         cfgtemp                 = [];
         cfgtemp.channel         = ichan_name;
         timefreq_ichan_temp   	= ft_selectdata(cfgtemp,timefreq_alldata{itrial});
+        %timefreq_ichan_temp   	= ft_selectdata(cfgtemp,LFP_lpfilt);
+
         %% WOD DATA : find WOD peak per channel, and normalize time per channel
         %use filtered data to find wod
         
@@ -102,17 +151,30 @@ for itrial= 1:size(LFP.trial,2)
         %case channel numbers were schuffled by fieldtrip)
         chan_idx    = strcmp(LFP_lpfilt.label, ichan_name);
         
-        %get hand-annotated wod timing
-        wod_marker = MuseStruct{1}{itrial}.markers.WOD.synctime%(itrial);%sofia changed :  MuseStruct{1} to  MuseStruct{1}{itrial} & synctime(itrial)to synctime
-        wod_marker = MuseStruct{1}.markers.WOD.synctime(itrial)%(itrial);%sofia changed :  MuseStruct{1} to  MuseStruct{1}{itrial} & synctime(itrial)to synctime
+%         %get hand-annotated wod timing
+%         %wod_marker = MuseStruct{1}.markers.WOD.synctime(itrial);%sofia changed :  MuseStruct{1} to  MuseStruct{1}{itrial} & synctime(itrial)to synctime
+%         %%%sofia a rajouter la converstion suivante le 21/10/2021
+%         wod_marker = MuseStruct{1}.markers.WOD.synctime(itrial);
+%         temp_wod_marker = [];
+%         if itrial>1
+%         temp_wod_marker =((LFP_trial.sampleinfo(itrial)/MuseStruct{1, 1}.markers.Stopping_Recording.synctime(itrial))* wod_marker)/LFP_trial.fsample
+%         wod_marker = temp_wod_marker
+%         fname_out = fullfile(cfg.datasavedir,'sampleinfo', sprintf([cfg.prefix,'trial' ,num2str(itrial), '.mat']))
+%         sampleinfo = LFP_trial.sampleinfo(itrial)
+%         save(fname_out,'sampleinfo')
+%         end
+%         %%% fin de la modification 
         
+       %correction apporté par sofia le 07/12/2021
+        wod_marker= MuseStruct{1}.markers.WOD.synctime(itrial) ;
+
         %select times where to search WOD peak
-        t = LFP_lpfilt.time{1};
-        t_1 = t > (wod_marker + cfg.LFP.wod_toisearch(1) - starttrial + offsettrial);
-        t_2 = t < (wod_marker + cfg.LFP.wod_toisearch(2) - starttrial + offsettrial);
-        t_sel = t_1 & t_2;
+        t      = LFP_lpfilt.time{itrial};%{1}; sofia changed time{itrial} time{1}
+        t_1    = t > (wod_marker + cfg.LFP.wod_toisearch(1) - starttrial(itrial) + offsettrial(itrial));
+        t_2    = t < (wod_marker + cfg.LFP.wod_toisearch(2) - starttrial(itrial) + offsettrial(itrial)) ;
+        t_sel  = t_1 & t_2;
         %Search LFP maximum peak in this selected window. '-'LFP because wod is negative
-        [v_peak_wod, t_peak_wod] = findpeaks(-LFP_lpfilt.trial{1}(chan_idx,t_sel),t(t_sel),'NPeaks',1,'SortStr','descend','WidthReference','Halfheight');
+        [v_peak_wod, t_peak_wod] = findpeaks(-LFP_lpfilt.trial{itrial}(chan_idx,t_sel),t(t_sel),'NPeaks',1,'SortStr','descend','WidthReference','Halfheight');
         clear t t_1 t_2 t_sel
         
         %keep only data between 0 and wod
@@ -197,27 +259,27 @@ end %itrial
 
 % add empty missing channels channels to have the same channels between rats
 for itrial = 1:size( timefreq_wod,2)
-    for chan_name = string(cfg.LFP.allchannel(1:end-1))
-        chan_renamed = sprintf('E%d',str2num(regexp(chan_name,'\d*','Match')));
-        if ~isfield(timefreq_wod{itrial}, chan_renamed)
+    for chan_name = string(cfg.LFP.allchannel)
+        %chan_renamed = sprintf('E%d',str2num(regexp(chan_name,'\d*','Match')));
+        if ~isfield(timefreq_wod{itrial}, chan_name)
            
-            timefreq_wod{itrial}.(chan_renamed)                 = [];
-            timefreq_wod_blcorrected{itrial}.(chan_renamed)                 = [];
+            timefreq_wod{itrial}.(chan_name)                 = [];
+            timefreq_wod_blcorrected{itrial}.(chan_name)                 = [];
             
-            timefreq_wod_timenorm{itrial}.(chan_renamed)        = [];
-            timefreq_wod_timenorm_blcorrected{itrial}.(chan_renamed)                 = [];
+            timefreq_wod_timenorm{itrial}.(chan_name)        = [];
+            timefreq_wod_timenorm_blcorrected{itrial}.(chan_name)                 = [];
          
-            timefreq_baseline{itrial}.(chan_renamed)            = [];
-            timefreq_baseline_blcorrected{itrial}.(chan_renamed)            = [];
+            timefreq_baseline{itrial}.(chan_name)            = [];
+            timefreq_baseline_blcorrected{itrial}.(chan_name)            = [];
  
-            log_timefreq_wod{itrial}.(chan_renamed)                 = [];
-            log_timefreq_wod_blcorrected{itrial}.(chan_renamed)                 = [];
+            log_timefreq_wod{itrial}.(chan_name)                 = [];
+            log_timefreq_wod_blcorrected{itrial}.(chan_name)                 = [];
             
-            log_timefreq_wod_timenorm{itrial}.(chan_renamed)        = [];
-            log_timefreq_wod_timenorm_blcorrected{itrial}.(chan_renamed)                 = [];
+            log_timefreq_wod_timenorm{itrial}.(chan_name)        = [];
+            log_timefreq_wod_timenorm_blcorrected{itrial}.(chan_name)                 = [];
           
-            log_timefreq_baseline{itrial}.(chan_renamed)            = [];
-            log_timefreq_baseline_blcorrected{itrial}.(chan_renamed)            = [];
+            log_timefreq_baseline{itrial}.(chan_name)            = [];
+            log_timefreq_baseline_blcorrected{itrial}.(chan_name)            = [];
             
         end
     end

@@ -54,7 +54,7 @@ eventnr = 0;
 marker  = table;
 
 % include NO_SCORE
-hyplabels = ["PHASE_1", "PHASE_2", "PHASE_3", "REM", "AWAKE", "NO_SCORE"];
+hyplabels = ["PHASE_1", "PHASE_2", "PHASE_3", "REM", "AWAKE", "NO_SCORE", "PRESLEEP", "POSTSLEEP"];
 
 % excluse NO_SCORE
 % hyplabels = ["PHASE_1", "PHASE_2", "PHASE_3", "REM", "AWAKE"];
@@ -76,17 +76,17 @@ for markername = string(cfg.hyp.markers)
             if ~isfield(MuseStruct{ipart}{idir}.markers, cfg.muse.startmarker.(markername))
                 continue
             end
-            if ~isfield(MuseStruct{ipart}{idir}.markers.(markername), 'synctime')
+            if ~isfield(MuseStruct{ipart}{idir}.markers.(cfg.muse.startmarker.(markername)), 'synctime')
                 continue
             end
-            if isempty(MuseStruct{ipart}{idir}.markers.(markername).synctime)
+            if isempty(MuseStruct{ipart}{idir}.markers.(cfg.muse.startmarker.(markername)).synctime)
                 continue
             end
 
-            for ievent = 1 : size(MuseStruct{ipart}{idir}.markers.(markername).synctime, 2)
+            for ievent = 1 : size(MuseStruct{ipart}{idir}.markers.(cfg.muse.startmarker.(markername)).synctime, 2)
 
                 eventnr = eventnr + 1;
-                marker.clock(eventnr)       = MuseStruct{ipart}{idir}.markers.(markername).clock(ievent);
+                marker.clock(eventnr)       = MuseStruct{ipart}{idir}.markers.(cfg.muse.startmarker.(markername)).clock(ievent);
                 marker.name(eventnr)        = markername;
                 marker.ipart(eventnr)       = ipart;
                 marker.idir(eventnr)        = idir;
@@ -122,24 +122,25 @@ end
 
 % find overlap of LFPs with hypnogram markers
 hypnogram = table;
-ihyp = 0;
+ihyp = 1;
 
 % Go through different parts
 for ipart = 1 : size(cfg.directorylist, 2)
-
+    
     % Go through directory list
     for idir = 1 : size(cfg.directorylist{ipart}, 2)
-
         for hyplabel = hyplabels
             if isfield(MuseStruct{ipart}{idir}.markers, [cell2mat(hyplabel), '__START__'])
-                for i = 1 : size(MuseStruct{ipart}{idir}.markers.([cell2mat(hyplabel), '__START__']).clock, 2)
-                    ihyp = ihyp + 1;
-                    hypnogram.starttime(ihyp)   = MuseStruct{ipart}{idir}.markers.([cell2mat(hyplabel), '__START__']).clock(i);
-                    hypnogram.endtime(ihyp)     = MuseStruct{ipart}{idir}.markers.([cell2mat(hyplabel), '__END__']).clock(i);
-                    hypnogram.duration(ihyp)    = hypnogram.endtime(ihyp) - hypnogram.starttime(ihyp);
-                    hypnogram.part(ihyp)        = ipart;
-                    hypnogram.directory(ihyp)   = {MuseStruct{ipart}{idir}.directory};
-                    hypnogram.hyplabel(ihyp)    = string(hyplabel);
+                if isfield(MuseStruct{ipart}{idir}.markers.([cell2mat(hyplabel), '__START__']), 'clock')
+                    for i = 1 : size(MuseStruct{ipart}{idir}.markers.([cell2mat(hyplabel), '__START__']).clock, 2)
+                        hypnogram.starttime(ihyp)   = MuseStruct{ipart}{idir}.markers.([cell2mat(hyplabel), '__START__']).clock(i);
+                        hypnogram.endtime(ihyp)     = MuseStruct{ipart}{idir}.markers.([cell2mat(hyplabel), '__END__']).clock(i);
+                        hypnogram.duration(ihyp)    = hypnogram.endtime(ihyp) - hypnogram.starttime(ihyp);
+                        hypnogram.part(ihyp)        = ipart;
+                        hypnogram.directory(ihyp)   = {MuseStruct{ipart}{idir}.directory};
+                        hypnogram.hyplabel(ihyp)    = string(hyplabel);
+                        ihyp = ihyp + 1;
+                    end
                 end
             end
         end
@@ -155,15 +156,19 @@ hypnogram = sortrows(hypnogram);
 % IEDs x Sleep stage per marker, separate for every night
 for markername = string(cfg.hyp.markers)
 
+    if isempty(hypnogram)
+        stats = [];
+        continue
+    end
     clear totaldur totalsum
     for ipart = unique(hypnogram.part)'
 
         s = 0;
         for hyplabel = hyplabels
             stats{ipart}.(markername).duration.(hyplabel)   = hours(sum(hypnogram.duration(hypnogram.hyplabel == hyplabel & hypnogram.part == ipart)));
-            stats{ipart}.(markername).sum.(hyplabel)        =  sum(marker.hyplabel == hyplabel & strcmp(marker.name, markername) & marker.ipart == ipart);
-%             stats{ipart}.(markername).avg.(hyplabel)        = mean(marker.hyplabel == hyplabel & strcmp(marker.name, markername) & marker.ipart == ipart);
-            stats{ipart}.(markername).std.(hyplabel)        =  std(marker.hyplabel == hyplabel & strcmp(marker.name, markername) & marker.ipart == ipart);
+            stats{ipart}.(markername).sum.(hyplabel)        = sum(marker.hyplabel == hyplabel & strcmp(marker.name, markername) & marker.ipart == ipart);
+%           stats{ipart}.(markername).avg.(hyplabel)        = mean(marker.hyplabel == hyplabel & strcmp(marker.name, markername) & marker.ipart == ipart);
+%           stats{ipart}.(markername).std.(hyplabel)        = std(marker.hyplabel == hyplabel & strcmp(marker.name, markername) & marker.ipart == ipart);
             s = s + stats{ipart}.(markername).sum.(hyplabel);
         end
         for hyplabel = hyplabels

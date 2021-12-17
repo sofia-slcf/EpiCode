@@ -18,9 +18,12 @@ end
 
 for ipart = 1:size(MuseStruct,2)
     
-    MuseStruct_concat{ipart}.starttime  = MuseStruct{ipart}{1}.starttime;
-    MuseStruct_concat{ipart}.endtime    = MuseStruct{ipart}{end}.endtime;
-    MuseStruct_concat{ipart}.directory  = cfg.directorylist{ipart};
+    %store directory infos
+    for idir = 1:size(MuseStruct{ipart},2)
+        MuseStruct_concat{ipart}.starttime{idir}  = MuseStruct{ipart}{idir}.starttime;
+        MuseStruct_concat{ipart}.endtime{idir}    = MuseStruct{ipart}{idir}.endtime;
+        MuseStruct_concat{ipart}.directory{idir}  = cfg.directorylist{ipart};
+    end
     
     %find hdr for each dir
     ft_progress('init','text');

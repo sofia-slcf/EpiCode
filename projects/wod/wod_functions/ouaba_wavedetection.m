@@ -1,6 +1,6 @@
 function stats_all = ouaba_wavedetection(cfg, force)
 
-
+MuseStruct = concatenateMuseMarkers(cfg,MuseStruct,false)
 fname_out = fullfile(cfg{3}.datasavedir,'Detection', sprintf('ouaba_wavedetection_allrats.mat'));
 
 if cfg{3}.LFP.inject_depth <2000 && size(cfg,2)<8
@@ -32,7 +32,7 @@ for irat= 3:size(cfg,2)
     
     %vérifier qu'il y a bien autant de trials que de marqueurs Vent_Off
     startmarker = cfg{irat}.muse.startmarker.(cfg{irat}.LFP.name{1});
-    if size(LFP.trial,2) ~= size(MuseStruct{1}{1}.markers.(startmarker).synctime,2)
+    if size(LFP.trial,2) ~= size(MuseStruct{1}.markers.(startmarker).synctime,2)
         error('Not the same number of trials that of marker start for %s. \nCheck that begin/end of each trial is not before start of file or after end of file', cfg{irat}.prefix(1:end-1));
     end
     
@@ -84,7 +84,7 @@ for irat= 3:size(cfg,2)
             %case channel numbers were schuffled by fieldtrip)
             chan_idx    = strcmp(LFP_lpfilt.label, ichan_name);
             
-            wod_marker = MuseStruct{1}{1}.markers.AD__START__.synctime(itrial);
+            wod_marker = MuseStruct{1}.markers.AD__START__.synctime(itrial);
             %select times where to search WOD peak
             t = LFP_lpfilt.time{itrial};
             t_1 = t > (wod_marker + cfg{irat}.LFP.wod_toisearch(1) - starttrial(itrial) + offsettrial(itrial));

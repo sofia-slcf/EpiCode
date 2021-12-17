@@ -43,7 +43,10 @@ for isave = 1:size(varargin,2)
             print(fig, '-dpdf', fname,'-r600');
         case 'png'
             fprintf('Print figure to %s\n',[fname, '.png']);
-            print(fig, '-dpng', fname,'-r600');
+            print(fig, '-dpng', fname,'-r600');        
+        case 'jpeg'
+            fprintf('Print figure to %s\n',[fname, '.jpg']);
+            print(fig, '-djpeg', fname,'-r600');
         case 'fig'
             fprintf('Save figure to %s\n',[fname, '.fig']);
             savefig(fig,fname);
