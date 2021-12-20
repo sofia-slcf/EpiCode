@@ -64,9 +64,7 @@ for ipart = 1 : size(MuseStruct_orig, 2)
         % remove marker
         for imarker = 1 : size(cfg.editmarkerfile.toremove,2)
             if isfield(MuseStruct_orig{ipart}{idir}.markers,cfg.editmarkerfile.toremove{imarker})
-
-                nr_removed = nr_removed + size(MuseStruct_orig{ipart}{idir}.markers.(cfg.editmarkerfile.toremove{imarker}).synctime, 2);    
-
+                nr_removed = nr_removed + 1;%size(MuseStruct_orig{ipart}{idir}.markers.(cfg.editmarkerfile.toremove{imarker,1}).synctime, 2);    
                 
                 MuseStruct_new{ipart}{idir}.markers = rmfield(MuseStruct_new{ipart}{idir}.markers,cfg.editmarkerfile.toremove{imarker});
             end

@@ -118,7 +118,7 @@ elseif ~force
             fprintf('Reading %s\n', fname);
             count = 0;
             err_count = 0;
-            while count == err_count 
+            while count == err_count
                 try
                     temp = load(fname);
                     for ipart = 1 : size(cfg.directorylist, 2)
@@ -128,9 +128,6 @@ elseif ~force
                     err_count = err_count + 1;
                 end
                 count = count + 1;
-                if count > 1000
-                    error('error while loading LFP');
-                end
             end
         else
             fprintf('Will be (re-) computing LFP data for %s\n', markername);
@@ -438,104 +435,8 @@ for markername = string(cfg.LFP.name)
             dirdat{idir}.trialinfo = trialinfo;
             
         end % idir
-
-        if exist('dirdat', 'var') % in case there is no marker in the data
-
-            % concatinate data of different datasets (over trials)
-            LFP{ipart}.(markername)             = ft_appenddata([], dirdat{hasmarker});
-            LFP{ipart}.(markername).fsample     = fsample;
-            clear dirdat*
-
-            %annotate artefacted trials
-            artefact        = false(size(LFP{ipart}.(markername).trialinfo, 1), 1);
-            artefact_length = zeros(size(LFP{ipart}.(markername).trialinfo, 1), 1);
-            ft_progress('init','text')
-            for ievent = 1 : size(LFP{ipart}.(markername).trialinfo, 1)
-                ft_progress(ievent/size(LFP{ipart}.(markername).trialinfo, 1), 'Looking for overlap with artefacts in trial %d of %d \n', ievent, size(LFP{ipart}.(markername).trialinfo, 1))
-                trlstart = LFP{ipart}.(markername).trialinfo.starttime(ievent);
-                trlend   = LFP{ipart}.(markername).trialinfo.endtime(ievent);
-                 
-                %FIXME
-                for idir = size(MuseStruct{ipart}, 2)%LFP{ipart}.(markername).trialinfo.idir(ievent)%1 : size(MuseStruct{ipart}, 2)
-
-                    if ~isfield(MuseStruct{ipart}{idir}.markers, 'BAD__START__')
-                        continue
-                    end
-
-                    if ~isfield(MuseStruct{ipart}{idir}.markers.BAD__START__, 'synctime')
-                        continue
-                    end
-
-                    for iart = 1 : size(MuseStruct{ipart}{idir}.markers.BAD__START__.synctime, 2)
-
-                        artstart = MuseStruct{ipart}{idir}.markers.BAD__START__.clock(iart);
-                        artend   = MuseStruct{ipart}{idir}.markers.BAD__END__.clock(iart);
-
-                        %full trial is before artefact
-                        if trlstart < artstart && trlend < artstart
-                            continue
-                            %full trial is after artefact
-                        elseif trlstart > artend && trlend > artend
-                            continue
-                        else
-                            artefact(ievent) = true;
-                            artefact_length(ievent) = seconds(artend - artstart) + artefact_length(ievent);
-                        end
-                    end % iart
-                end % idir
-            end % ievent
-            ft_progress('close');
-
-            % add artefact to trialinfo
-            LFP{ipart}.(markername).trialinfo.artefact = artefact;
-            LFP{ipart}.(markername).trialinfo.artefact_length = artefact_length;
-
-            %annotate artefacted trials
-            artefact = false(size(LFP{ipart}.(markername).trialinfo, 1), 1);
-            ft_progress('init','text')
-            for ievent = 1 : size(LFP{ipart}.(markername).trialinfo, 1)
-                ft_progress(ievent/size(LFP{ipart}.(markername).trialinfo, 1), 'Looking for overlap with artefacts in trial %d of %d \n', ievent, size(LFP{ipart}.(markername).trialinfo, 1))
-                trlstart = LFP{ipart}.(markername).trialinfo.starttime(ievent);
-                trlend   = LFP{ipart}.(markername).trialinfo.endtime(ievent);
-
-                %FIXME
-                for idir = size(MuseStruct{ipart}, 2)%LFP{ipart}.(markername).trialinfo.idir(ievent)%1 : size(MuseStruct{ipart}, 2)
-
-                    if ~isfield(MuseStruct{ipart}{idir}.markers, 'BAD__START__')
-                        continue
-                    end
-
-                    if ~isfield(MuseStruct{ipart}{idir}.markers.BAD__START__, 'synctime')
-                        continue
-                    end
-
-                    for iart = 1 : size(MuseStruct{ipart}{idir}.markers.BAD__START__.synctime, 2)
-
-                        artstart = MuseStruct{ipart}{idir}.markers.BAD__START__.clock(iart);
-                        artend   = MuseStruct{ipart}{idir}.markers.BAD__END__.clock(iart);
-
-                        %full trial is before artefact
-                        if trlstart < artstart && trlend < artstart
-                            continue
-                            %full trial is after artefact
-                        elseif trlstart > artend && trlend > artend
-                            continue
-                        else
-                            artefact(ievent) = true;
-                        end
-                    end % iart
-                end % idir
-            end % ievent
-            ft_progress('close');
-
-            % add artefact to trialinfo
-            LFP{ipart}.(markername).trialinfo.artefact = artefact;
-
-            %remove cfg to save space on disk, if required
-            if ~istrue(keepcfg)
-                LFP{ipart}.(markername) = rmfield(LFP{ipart}.(markername),'cfg');
-            end
-        else
+        
+        if ~exist('dirdat', 'var') % in case there is no marker in the data
             LFP{ipart}.(markername) = [];
             fprintf('%s part %d : No data with marker ''%s''\n', cfg.prefix(1:end-1), ipart, markername);
             continue
@@ -557,10 +458,5 @@ for markername = string(cfg.LFP.name)
         fprintf('Saving LFP data for %s\n', markername);
         saveMarker_LFP(LFP, markername, fname_out)
     end
-
+    
 end % markername
-
-% if isempty(markername)
-%     fprintf('cfg.LFP.name is empty, no LFP is read\n');
-% end
-end
